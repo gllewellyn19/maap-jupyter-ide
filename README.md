@@ -102,3 +102,4 @@ development. I recommend taking a look at [this](https://jupyterlab.readthedocs.
         perl -pi -e "s|web_app.settings\['base_url'\]|'/'|g" /show_ssh_info/show_ssh_info/__init__.py
 # maap-jupyter-ide-testing
 # maap-jupyter-ide-testing
+# maap-jupyter-ide-testing
