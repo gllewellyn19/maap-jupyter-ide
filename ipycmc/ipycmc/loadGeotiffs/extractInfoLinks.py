@@ -25,7 +25,7 @@ def extract_geotiff_links(folder_path):
         if obj.size and file_ending(obj.key): 
             geotiff_links.append(required_info.required_start[0] + bucket_name + "/" + obj.key)
 
-    print("Geotiff links extracted from given folder are "+geotiff_links)
+    print("Geotiff links extracted from given folder are: "+str(geotiff_links))
     return geotiff_links
 
     
