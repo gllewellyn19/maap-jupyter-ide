@@ -129,17 +129,9 @@ def create_request_multiple_geotiffs(urls, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    endpoint_tiler = extractInfoLinks.determine_environment_list(urls)
     if not errorChecking.tiler_can_access_links(urls):
         return None
-    mosaic_json_url = createUrl.create_mosaic_json_url(urls)
-    if mosaic_json_url == None:
-        return None
-    newUrl = endpoint_tiler + required_info.tiler_extensions.get("multiple") + "url=" + mosaic_json_url
-    newUrl = createUrl.add_defaults_url(newUrl, default_ops)
-    if newUrl == None:
-        return None
+    newUrl = createUrl.create_mosaic_json_url(urls, default_ops)
     if errorChecking.check_errors_request_url(newUrl):
         return None
     return newUrl
-    

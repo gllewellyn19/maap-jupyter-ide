@@ -10,6 +10,8 @@ from rio_tiler.io import COGReader
 import copy
 from . import errorChecking
 import os
+import requests
+import json
 
 global required_info
 
@@ -18,40 +20,28 @@ def initialize_required_info(required_info_given):
     required_info = required_info_given
 
 # Returns the list for a mosaic JSON for the given s3 links. Returns None in case of error and prints the appropriate error message
-def create_mosaic_json_url(urls):
-    mosaic_data = create_mosaic_json_from_urls(urls)
-    print(mosaic_data)
+def create_mosaic_json_url(urls, default_ops):
+    # TODO error check in this function and potentially return None, remember to get None in loadGeotiffs
+    mosaic_data_json = create_mosaic_json(urls)
+    posting_endpoint = required_info.posting_tiler_endpoint
     
-    # TODO try writing to where the first link is?
-    f = open(required_info.mosaicjson_file_name, "w")
-    f.write(mosaic_data)
-    f.close()
+    # Post the mosaic json
+    r = requests.post(
+        url=f"{posting_endpoint}/mosaicjson/mosaics",
+        headers={
+            "Content-Type": "application/vnd.titiler.mosaicjson+json",
+        },
+        json=mosaic_data_json).json()
     
-    bucket_name = errorChecking.determine_valid_bucket(urls[0])
-    if bucket_name == None:
-        print("Code not set up for published links so not working.")
-        mosaic_data_link = None # TODO this means the data is published and it does not work for published data yet, will work when I know how to determine current bucket
-    else:
-        mosaic_data_link = create_s3_link_mosaic(bucket_name, os.getcwd())
-        print("Mosaic json file path: " + str(mosaic_data_link))
-    return mosaic_data_link
+    # TODO make this in variables.json and eval it
+    #xml_endpoint = list(filter(lambda x: x.get("rel") == "wmts", dict(r)["links"]))[0].get('href')
+    try:
+        xml_endpoint = eval(required_info.getting_xml_endpoint)
+    except:
+        print("getting_xml_endpoint variable unable to be evaluated from variables.json")
+        return None
 
-def create_s3_link_mosaic(bucket_name, mosaic_path):
-    mosaic_s3_link = required_info.required_start[0] + bucket_name + "/"
-    if not os.getenv('PWD').startswith('/projects'):
-        print("Currently, capabilities for writing mosaic JSONs to s3 only work for maap-ops-workspace and maap-ops-dataset.")
-        return None
-    if (bucket_name == "maap-ops-workspace"):
-        if required_info.public_bucket_path in mosaic_path:
-            mosaic_s3_link = mosaic_s3_link + "shared/" + os.getenv(required_info.workspace_namespace) + mosaic_path[len(os.getenv(required_info.env_home)+required_info.public_bucket_path):]
-        elif required_info.private_bucket_path in mosaic_path:
-            mosaic_s3_link = mosaic_s3_link + os.getenv(required_info.workspace_namespace) + mosaic_path[len(os.getenv(required_info.env_home)+required_info.private_bucket_path):]
-    elif (bucket_name == "maap-ops-dataset"):
-        mosaic_s3_link = mosaic_s3_link + mosaic_path[len(os.getenv(required_info.env_home)):]
-    else:
-        print(bucket_name + " workspace not supported to writing mosaic JSON files and reading them.")
-        return None
-    return mosaic_s3_link + "/" + required_info.mosaicjson_file_name
+    return add_defaults_url(xml_endpoint + "?", default_ops)
 
 # Creates a variable representing a mosaic JSON to pass to the Tiler
 def create_mosaic_json(urls):
@@ -83,7 +73,9 @@ def create_mosaic_json(urls):
             'properties': {'path': 's3://nasa-maap-data-store/file-staging/nasa-map/SRTMGL1_COD___001/N45W102.SRTMGL1.tif'},
             'type': 'Feature'}]
     
-    return MosaicJSON.from_features(features, minzoom=10, maxzoom=18).json()
+    mosaic_data = MosaicJSON.from_features(features, minzoom=10, maxzoom=18).json()
+    mosaic_data_json = json.loads(mosaic_data)
+    return mosaic_data_json
     
 def create_mosaic_json_from_urls(urls):
     os.environ['CURL_CA_BUNDLE']='/etc/ssl/certs/ca-certificates.crt'
