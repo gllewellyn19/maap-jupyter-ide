@@ -15,15 +15,20 @@ def extract_geotiff_links(folder_path):
     if bucket_name == None:
         print("The environment of the bucket you passed as a folder is not a valid environment type. The supported environments are: " +  
             (', '.join([str(key) for key in required_info.endpoints_tiler])) + ".")
-        return []
+        return None
     file_path = get_file_path_folder(folder_path)
 
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(bucket_name)
-    geotiff_links = []
-    for obj in bucket.objects.filter(Prefix=file_path):
-        if obj.size and file_ending(obj.key): 
-            geotiff_links.append(required_info.required_start[0] + bucket_name + "/" + obj.key)
+    try:
+        s3 = boto3.resource('s3')
+        bucket = s3.Bucket(bucket_name)
+        geotiff_links = []
+        for obj in bucket.objects.filter(Prefix=file_path):
+            if obj.size and file_ending(obj.key): 
+                # If looking in s3 bucket, then can hard code in s3:// because that must be the beginning
+                geotiff_links.append("s3://" + bucket_name + "/" + obj.key)
+    except:
+        print("Error reading file contents from bucket. This is likely a permissions error.")
+        return None
 
     print("Geotiff links extracted from given folder are: "+str(geotiff_links))
     return geotiff_links
@@ -31,11 +36,14 @@ def extract_geotiff_links(folder_path):
     
 # Extracts the bucket name from the s3 link and prints the appropriate error message if the bucket name cannot be found
 def extract_bucket_name(s3Link):
-    location_start_bucket_name = len(required_info.required_start[0])
+    location_start_bucket_name = s3Link.find("//") + 2
+    if location_start_bucket_name == -1 + 2:
+        print("Error reading extract bucket name because no // to indicate link in " + s3Link)
+        return None
     if s3Link[location_start_bucket_name:].find("/") == -1:
         #print("Your s3 link does not contain a / to separate the bucket name from the key name. Please provide a correct s3 link. Example: s3://maap-ops-workspace/graceal/filename.tiff")
         return None
-    location_end_bucket_name = s3Link[location_start_bucket_name:].find("/") + len(required_info.required_start[0])
+    location_end_bucket_name = s3Link[location_start_bucket_name:].find("/") + location_start_bucket_name
     return s3Link[location_start_bucket_name:location_end_bucket_name]
 
 # Determines the environment of the given link by extracting the bucket name and referring to a constant dictionary for the corresponding Tiler endpoint
@@ -69,7 +77,11 @@ def file_ending(s3Link):
 
 # Assumes that the folder exists in a valid bucket and gives the file path without the s3://bucket-name from the url 
 def get_file_path_folder(url):
-    file_path = url[len(required_info.required_start[0]):]
+    location_start_bucket_name = s3Link.find("//") + 2
+    if location_start_bucket_name == -1 + 2:
+        print("Error reading extract bucket name because no // to indicate link in " + s3Link)
+        return None
+    file_path = url[location_start_bucket_name:]
     ending_bucket_name = file_path.find("/")
     file_path = file_path[ending_bucket_name+1:]
     return file_path

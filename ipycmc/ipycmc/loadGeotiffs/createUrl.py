@@ -32,13 +32,11 @@ def create_mosaic_json_url(urls, default_ops):
             "Content-Type": "application/vnd.titiler.mosaicjson+json",
         },
         json=mosaic_data_json).json()
-    
-    # TODO make this in variables.json and eval it
-    #xml_endpoint = list(filter(lambda x: x.get("rel") == "wmts", dict(r)["links"]))[0].get('href')
+        
     try:
-        xml_endpoint = eval(required_info.getting_xml_endpoint)
+        xml_endpoint = eval(required_info.getting_wmts_endpoint)
     except:
-        print("getting_xml_endpoint variable unable to be evaluated from variables.json")
+        print("getting_wmts_endpoint variable unable to be evaluated from variables.json")
         return None
 
     return add_defaults_url(xml_endpoint + "?", default_ops)

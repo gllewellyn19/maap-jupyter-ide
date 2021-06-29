@@ -35,10 +35,6 @@ def loadGeotiffs(urls, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-
-    #files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    #for f in files:
-    #    print(f)
     global required_info
     required_info = requiredInfoClass.RequiredInfoClass()
     if not required_info.setup_successful:
@@ -50,18 +46,20 @@ def loadGeotiffs(urls, default_ops):
     # Check the type and format of the URLs passed into the function
     if errorChecking.check_valid_arguments(urls) == False:
         return None
-    
+
+    request_url = None 
     # If single GeoTIFF file, execute the functions for a single GeoTIFF to wmts tiles and pass to CMC
     if isinstance(urls, str) and extractInfoLinks.file_ending(urls):
-        return create_request_single_geotiff(urls, default_ops)
+        request_url = create_request_single_geotiff(urls, default_ops)
 
     # If folder of geoTiff links, execute the functions for a list or single GeoTIFF(s) to make a mosaic JSON
     if isinstance(urls, str) and not extractInfoLinks.file_ending(urls):
-        return create_request_folder_geotiffs(urls, default_ops)
+        request_url = create_request_folder_geotiffs(urls, default_ops)
 
     # Execute the functions for a list of GeoTIFF to make a mosaic JSON
     if isinstance(urls, list):
-        return create_request_multiple_geotiffs(urls, default_ops)
+        request_url = create_request_multiple_geotiffs(urls, default_ops)
+    return request_url, requiredInfo.handle_as, requiredInfo.default_ops_load_layer_config
 
 def create_request_single_geotiff(s3Url, default_ops):
     """Creates the request url in the case of a single s3 geotiff link being passed
@@ -106,6 +104,8 @@ def create_request_folder_geotiffs(urls, default_ops):
         a request url to be passed to load_layer_config or None in the case of error or if no Geotiff files in the folder
     """
     geotiffs = extractInfoLinks.extract_geotiff_links(urls)
+    if geotiffs == None:
+        return None
     if len(geotiffs) == 0:
         print("No GeoTIFFs found in the given folder.")
         return None

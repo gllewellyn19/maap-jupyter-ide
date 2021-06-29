@@ -1,5 +1,5 @@
-{"required_start":["s3://", "S3://"],
-    "required_end":[".tif", ".TIF", ".tiff", ".TIFF"],
+{"required_starts":["s3://", "S3://"],
+    "required_ends":[".tif", ".TIF", ".tiff", ".TIFF"],
     "defaults_tiler":{"tile_format":"png", "tile_scale":1, "pixel_selection":"first", "TileMatrixSetId":"WebMercatorQuad", "resampling_method":"nearest", "return_mask":"true", "rescale":"0%2C1000"},
     "endpoints_tiler":{"maap-ops-workspace":"https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com", "maap-ops-dataset":"https://h9su0upami.execute-api.us-east-1.amazonaws.com"},
     "tiler_extensions":{"single":"/cog/WMTSCapabilities.xml?","multiple":"/mosaicjson/WMTSCapabilities.xml?"},
@@ -14,5 +14,7 @@
     "tile_format":["png", "jpg", "jpeg", "tif", "jp2", "npy", "webp", "pngraw"],
     "pixel_selection":["first", "highest", "lowest", "mean", "median", "stdev"],
     "getting_xml_endpoint":"list(filter(lambda x: x.get('rel') == 'wmts', dict(r)['links']))[0].get('href')",
-    "web_starts":["https://", "http://"]
+    "web_starts":["https://", "http://"],
+    "default_handle_as": "wmts/xml",
+    "default_ops_load_layer_config": {"handleAs": "wmts_raster"}
    }

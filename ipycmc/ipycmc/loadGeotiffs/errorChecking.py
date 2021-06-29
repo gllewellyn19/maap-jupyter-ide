@@ -61,10 +61,10 @@ def determine_valid_bucket(s3Url):
 # and returns False. Can add other checks in this function to check the s3 link. Check for ending with .tiff is elsewhere in the function
 def check_valid_s3_link(s3Link):  
     # Checks the beginning type of the s3 link is s3://
-    for valid_start in required_info.required_start:
+    for valid_start in required_info.required_starts:
         if s3Link[:len(valid_start)] == valid_start:
             return True
-    print("Invalid s3 link: "+s3Link+". Beginning does not match any of "+(', '.join([str(elem) for elem in required_info.required_start]))+ ".")
+    print("Invalid s3 link: "+s3Link+". Beginning does not match any of "+(', '.join([str(elem) for elem in required_info.required_starts]))+ ".")
     return False
 
 # Returns True if all the environments are the same in the list of urls and False otherwise. If one of the environments is not in supported list, assumed to be published.
@@ -108,7 +108,7 @@ def check_valid_default_arguments(default_ops):
                 " is accepted, but you passed " + str(type(default_ops[key])) + ".")
                 return False
         except:
-            print("JSON file is formatted incorrectly because " + required_info.required_class_types_args_tiler[key] + " is not a valid class type.")
+            print("JSON file variable required_class_types_args_tiler is formatted incorrectly because " + required_info.required_class_types_args_tiler[key] + " is not a valid class type.")
             return False 
     return True
 
