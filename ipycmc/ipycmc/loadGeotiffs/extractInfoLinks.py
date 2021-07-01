@@ -1,4 +1,3 @@
-
 import boto3
 from . import errorChecking
 
@@ -22,11 +21,13 @@ def extract_geotiff_links(folder_path):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(bucket_name)
         geotiff_links = []
+        print("file path: "+file_path+ " bucket name: "+bucket_name)
         for obj in bucket.objects.filter(Prefix=file_path):
-            if obj.size and file_ending(obj.key): 
+            if obj.size and file_ending(obj.key) and obj.key[len(file_path)+1:].find("/") == -1: 
                 # If looking in s3 bucket, then can hard code in s3:// because that must be the beginning
                 geotiff_links.append("s3://" + bucket_name + "/" + obj.key)
     except:
+        print(sys.exc_info())
         print("Error reading file contents from bucket. This is likely a permissions error.")
         return None
 
@@ -70,18 +71,18 @@ def determine_environment_list(urls):
 
 # Returns False if the ending type of the file is not .tif or any other valid ending type and True if it is
 def file_ending(s3Link):
-    for valid_ending in required_info.required_end:
+    for valid_ending in required_info.required_ends:
         if s3Link[len(valid_ending)*-1:] == valid_ending:
             return True
     return False
 
 # Assumes that the folder exists in a valid bucket and gives the file path without the s3://bucket-name from the url 
-def get_file_path_folder(url):
+def get_file_path_folder(s3Link):
     location_start_bucket_name = s3Link.find("//") + 2
     if location_start_bucket_name == -1 + 2:
         print("Error reading extract bucket name because no // to indicate link in " + s3Link)
         return None
-    file_path = url[location_start_bucket_name:]
+    file_path = s3Link[location_start_bucket_name:]
     ending_bucket_name = file_path.find("/")
     file_path = file_path[ending_bucket_name+1:]
     return file_path

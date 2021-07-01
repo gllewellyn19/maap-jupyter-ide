@@ -5,10 +5,8 @@ If the user passes a single s3 link, then it is passed to the Tiler with its def
 passed to load_layer_config
 If the user passes a s3 folder or list of s3 links, then a mosaic JSON is created that is passed to the Tiler that generated an XML file 
 with wmts tile to pass to load_layer_config
-
 This function also provides extensive error checking for the user input arguments so that user's understand the mistakes they are making in their input.
 Only certain MAAP s3 environments are permitted at the moment. 
-
 Written by Grace Llewellyn
 """
 
@@ -22,14 +20,12 @@ global required_info
 
 def loadGeotiffs(urls, default_ops):
     """Main function that handles the users request
-
     Parameters
     ----------
     urls : str or list
         The locations of the files in s3 to read. Can be in the format of a single s3 link, list of s3 links, or folder with tif files
     default_ops : dict
         Default arguments to pass to the Tiler when making the wmts tiles
-
     Returns
     -------
     str
@@ -38,14 +34,14 @@ def loadGeotiffs(urls, default_ops):
     global required_info
     required_info = requiredInfoClass.RequiredInfoClass()
     if not required_info.setup_successful:
-        return None
+        return None, None, None
     errorChecking.initialize_required_info(required_info)
     extractInfoLinks.initialize_required_info(required_info)
     createUrl.initialize_required_info(required_info)
 
     # Check the type and format of the URLs passed into the function
     if errorChecking.check_valid_arguments(urls) == False:
-        return None
+        return None, None, None
 
     request_url = None 
     # If single GeoTIFF file, execute the functions for a single GeoTIFF to wmts tiles and pass to CMC
@@ -59,18 +55,16 @@ def loadGeotiffs(urls, default_ops):
     # Execute the functions for a list of GeoTIFF to make a mosaic JSON
     if isinstance(urls, list):
         request_url = create_request_multiple_geotiffs(urls, default_ops)
-    return request_url, requiredInfo.handle_as, requiredInfo.default_ops_load_layer_config
+    return request_url, required_info.handle_as, required_info.default_ops_load_layer_config
 
 def create_request_single_geotiff(s3Url, default_ops):
     """Creates the request url in the case of a single s3 geotiff link being passed
-
     Parameters
     ----------
     s3Url : str
         The location of the s3Url to pass to the Tiler to make tiles
     default_ops : dict
         Default arguments to pass to the Tiler when making the wmts tiles
-
     Returns
     -------
     str
@@ -90,14 +84,12 @@ def create_request_single_geotiff(s3Url, default_ops):
 
 def create_request_folder_geotiffs(urls, default_ops):
     """Creates the request url in the case of a folder with multiple geotiff files in it
-
     Parameters
     ----------
     urls : str
         The location of the folder with Geotiff files
     default_ops : dict
         Default arguments to pass to the Tiler when making the wmts tiles
-
     Returns
     -------
     str
@@ -116,14 +108,12 @@ def create_request_folder_geotiffs(urls, default_ops):
 
 def create_request_multiple_geotiffs(urls, default_ops):
     """Creates the request url in the case of a links of s3 links to Geotiff files
-
     Parameters
     ----------
     urls : list
         The list of s3 urls to create a mosaic json
     default_ops : dict
         Default arguments to pass to the Tiler when making the wmts tiles
-
     Returns
     ------- 
     str

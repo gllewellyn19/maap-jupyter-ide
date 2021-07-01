@@ -13,7 +13,7 @@
     "required_class_types_args_tiler":{"tile_scale":"int", "minzoom":"int", "maxzoom":"int", "bidx":"str", "expression":"str", "unscale":"bool", "rescale":"str", "color_formula":"str", "return_mask":"bool", "colormap":"str", "tile_format":"str", "TileMatrixSetId":"str", "resampling_method":"str", "colormap_name":"str", "pixel_selection":"str"},
     "tile_format":["png", "jpg", "jpeg", "tif", "jp2", "npy", "webp", "pngraw"],
     "pixel_selection":["first", "highest", "lowest", "mean", "median", "stdev"],
-    "getting_xml_endpoint":"list(filter(lambda x: x.get('rel') == 'wmts', dict(r)['links']))[0].get('href')",
+    "getting_wmts_endpoint":"list(filter(lambda x: x.get('rel') == 'wmts', dict(r)['links']))[0].get('href')",
     "web_starts":["https://", "http://"],
     "default_handle_as": "wmts/xml",
     "default_ops_load_layer_config": {"handleAs": "wmts_raster"}

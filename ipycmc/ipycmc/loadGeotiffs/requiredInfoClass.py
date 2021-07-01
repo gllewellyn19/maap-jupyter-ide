@@ -50,6 +50,7 @@ class RequiredInfoClass:
         except:
             print("Essential key missing from JSON file: " + str(sys.exc_info()[1]))
             self.setup_successful = False
+            return
 
         self.setup_successful = True
         self.check_non_empty_all()
