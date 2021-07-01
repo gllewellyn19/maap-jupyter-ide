@@ -1,5 +1,6 @@
 import boto3
 from . import errorChecking
+import os
 
 global required_info
 
@@ -10,6 +11,9 @@ def initialize_required_info(required_info_given):
 # Extracts the list of geotiff links from the folder path. Returns None if the folder path is not reachable and only returns the names of files that end in
 # required_end_s3_link_lowercase or required_end_s3_link_uppercase
 def extract_geotiff_links(folder_path):
+    if not os.path.isdir(folder_path):
+        print("The folder path you provided is not a valid directory.")
+        return None
     bucket_name = errorChecking.determine_valid_bucket(folder_path)
     if bucket_name == None:
         print("The environment of the bucket you passed as a folder is not a valid environment type. The supported environments are: " +  
