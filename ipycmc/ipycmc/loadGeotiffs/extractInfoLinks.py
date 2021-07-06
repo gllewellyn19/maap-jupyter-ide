@@ -1,6 +1,7 @@
 import boto3
 from . import errorChecking
 import os
+import sys
 
 global required_info
 

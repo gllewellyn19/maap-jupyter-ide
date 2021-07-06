@@ -70,6 +70,9 @@ def create_request_single_geotiff(s3Url, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
+    if not extractInfoLinks.file_ending(s3Url):
+        print("Single geotiff file must end in one of " + (', '.join([str(elem) for elem in required_info.required_ends]))+ ".")
+        return None
     endpoint_tiler = extractInfoLinks.determine_environment(s3Url)
     # None being returns means that the link is published, use the Tiler ops endpoint as a default
     if endpoint_tiler == None:
@@ -122,6 +125,8 @@ def create_request_multiple_geotiffs(urls, default_ops):
     if not errorChecking.tiler_can_access_links(urls):
         return None
     newUrl = createUrl.create_mosaic_json_url(urls, default_ops)
+    if newUrl == None:
+        return None
     if errorChecking.check_errors_request_url(newUrl):
         return None
     return newUrl

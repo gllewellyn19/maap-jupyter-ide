@@ -36,7 +36,7 @@ def create_mosaic_json_url(urls, default_ops):
     try:
         xml_endpoint = eval(required_info.getting_wmts_endpoint)
     except:
-        print("getting_wmts_endpoint variable unable to be evaluated from variables.json")
+        print("getting_wmts_endpoint variable unable to be evaluated from variables.json or error in request url "+r)
         return None
 
     return add_defaults_url(xml_endpoint + "?", default_ops)

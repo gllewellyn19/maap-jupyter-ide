@@ -61,16 +61,11 @@ def determine_valid_bucket(s3Url):
 # and returns False. Can add other checks in this function to check the s3 link. Check for ending with .tiff is elsewhere in the function
 def check_valid_s3_link(s3Link):  
     # Checks the beginning type of the s3 link is s3://
-    valid = False
     for valid_start in required_info.required_starts:
         if s3Link[:len(valid_start)] == valid_start:
-            valid = True
-    if not valid:
-        print("Invalid s3 link: "+s3Link+". Beginning does not match any of "+(', '.join([str(elem) for elem in required_info.required_starts]))+ ".")
-    if not extractInfoLinks.file_ending(s3Link):
-        print(s3Link + " ending doesn't match any of "+(', '.join([str(elem) for elem in required_info.required_ends]))+ ".")
-        valid = False
-    return valid
+            return True
+    print("Invalid s3 link: "+s3Link+". Beginning does not match any of "+(', '.join([str(elem) for elem in required_info.required_starts]))+ ".")
+    return False
 
 # Returns True if all the environments are the same in the list of urls and False otherwise. If one of the environments is not in supported list, assumed to be published.
 # Published environments may be combined with a single s3 bucket. Prints appropriate error message if necessary.
