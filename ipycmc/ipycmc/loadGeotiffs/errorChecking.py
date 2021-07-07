@@ -22,10 +22,10 @@ def check_valid_arguments(urls):
         if not urls:
             print("You have provided an empty list. Please provide s3 link(s).")
             return False
+        if check_environments_same(urls) == False:
+            return False
         for url in urls:
-            if check_valid_s3_link(url) == False:
-                return False
-            if check_environments_same(urls) == False:
+            if check_valid_s3_link(url) == False or extractInfoLinks.file_ending(url) == False:
                 return False
         return True
     else:

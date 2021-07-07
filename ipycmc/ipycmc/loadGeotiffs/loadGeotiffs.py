@@ -18,7 +18,7 @@ from . import requiredInfoClass
 json_file_name = "variables.json"
 global required_info
 
-def loadGeotiffs(urls, default_ops):
+def loadGeotiffs(urls, default_ops, debug_mode):
     """Main function that handles the users request
     Parameters
     ----------
@@ -32,7 +32,7 @@ def loadGeotiffs(urls, default_ops):
         a request url to be passed to load_layer_config or None in the case of error
     """
     global required_info
-    required_info = requiredInfoClass.RequiredInfoClass()
+    required_info = requiredInfoClass.RequiredInfoClass(debug_mode)
     if not required_info.setup_successful:
         return None, None, None
     errorChecking.initialize_required_info(required_info)
@@ -40,24 +40,24 @@ def loadGeotiffs(urls, default_ops):
     createUrl.initialize_required_info(required_info)
 
     # Check the type and format of the URLs passed into the function
-    if errorChecking.check_valid_arguments(urls) == False:
+    if debug_mode and errorChecking.check_valid_arguments(urls) == False:
         return None, None, None
 
     request_url = None 
     # If single GeoTIFF file, execute the functions for a single GeoTIFF to wmts tiles and pass to CMC
     if isinstance(urls, str) and extractInfoLinks.file_ending(urls):
-        request_url = create_request_single_geotiff(urls, default_ops)
+        request_url = create_request_single_geotiff(urls, default_ops, debug_mode)
 
     # If folder of geoTiff links, execute the functions for a list or single GeoTIFF(s) to make a mosaic JSON
     if isinstance(urls, str) and not extractInfoLinks.file_ending(urls):
-        request_url = create_request_folder_geotiffs(urls, default_ops)
+        request_url = create_request_folder_geotiffs(urls, default_ops, debug_mode)
 
     # Execute the functions for a list of GeoTIFF to make a mosaic JSON
     if isinstance(urls, list):
-        request_url = create_request_multiple_geotiffs(urls, default_ops)
+        request_url = create_request_multiple_geotiffs(urls, default_ops, debug_mode)
     return request_url, required_info.handle_as, required_info.default_ops_load_layer_config
 
-def create_request_single_geotiff(s3Url, default_ops):
+def create_request_single_geotiff(s3Url, default_ops, debug_mode):
     """Creates the request url in the case of a single s3 geotiff link being passed
     Parameters
     ----------
@@ -70,22 +70,17 @@ def create_request_single_geotiff(s3Url, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    if not extractInfoLinks.file_ending(s3Url):
-        print("Single geotiff file must end in one of " + (', '.join([str(elem) for elem in required_info.required_ends]))+ ".")
-        return None
     endpoint_tiler = extractInfoLinks.determine_environment(s3Url)
     # None being returns means that the link is published, use the Tiler ops endpoint as a default
     if endpoint_tiler == None:
         endpoint_tiler = required_info.endpoint_published_data
     newUrl = endpoint_tiler + required_info.tiler_extensions.get("single") + "url=" + s3Url
     newUrl = createUrl.add_defaults_url(newUrl, default_ops)
-    if newUrl == None:
-        return None
-    if errorChecking.check_errors_request_url(newUrl):
+    if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):
         return None
     return newUrl
 
-def create_request_folder_geotiffs(urls, default_ops):
+def create_request_folder_geotiffs(urls, default_ops, debug_mode):
     """Creates the request url in the case of a folder with multiple geotiff files in it
     Parameters
     ----------
@@ -98,18 +93,15 @@ def create_request_folder_geotiffs(urls, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error or if no Geotiff files in the folder
     """
-    geotiffs = extractInfoLinks.extract_geotiff_links(urls)
+    geotiffs = extractInfoLinks.extract_geotiff_links(urls, debug_mode)
     if geotiffs == None:
         return None
-    if len(geotiffs) == 0:
-        print("No GeoTIFFs found in the given folder.")
-        return None
-    elif len(geotiffs) == 1:
+    if len(geotiffs) == 1:
         return create_request_single_geotiff(geotiffs[0], default_ops)
     else:
         return create_request_multiple_geotiffs(geotiffs, default_ops)
 
-def create_request_multiple_geotiffs(urls, default_ops):
+def create_request_multiple_geotiffs(urls, default_ops, debug_mode):
     """Creates the request url in the case of a links of s3 links to Geotiff files
     Parameters
     ----------
@@ -122,11 +114,9 @@ def create_request_multiple_geotiffs(urls, default_ops):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    if not errorChecking.tiler_can_access_links(urls):
+    if debug_mode and (not errorChecking.tiler_can_access_links(urls)):
         return None
-    newUrl = createUrl.create_mosaic_json_url(urls, default_ops)
-    if newUrl == None:
-        return None
-    if errorChecking.check_errors_request_url(newUrl):
+    newUrl = createUrl.create_mosaic_json_url(urls, default_ops, debug_mode)
+    if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):
         return None
     return newUrl

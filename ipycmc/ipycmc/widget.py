@@ -19,6 +19,7 @@ from ._frontend import module_name, module_version
 from .loadGeotiffs import loadGeotiffs
 
 import os
+import sys
 
 class InteractMixin(object):
 
@@ -53,8 +54,13 @@ class MapCMC(DOMWidget, InteractMixin):
     def load_layer_config(self, url, handle_as, default_ops = {}):
         self._argv = ["loadLayerConfig", url, handle_as, default_ops]
 
-    def load_geotiffs(self, urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}):
-        return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.loadGeotiffs(urls, default_ops)
+    def load_geotiffs(self, urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True):
+        try:
+            return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.loadGeotiffs(urls, default_ops, debug_mode)
+        except:
+            print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
+            print("Error message: " + str(sys.exc_info()[0]))
+            return
         print("Request url generated: " + str(return_url))
         if return_url != None:
             if not handle_as:

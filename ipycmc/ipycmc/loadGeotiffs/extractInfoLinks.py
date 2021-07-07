@@ -11,8 +11,8 @@ def initialize_required_info(required_info_given):
 
 # Extracts the list of geotiff links from the folder path. Returns None if the folder path is not reachable and only returns the names of files that end in
 # required_end_s3_link_lowercase or required_end_s3_link_uppercase
-def extract_geotiff_links(folder_path):
-    #if not os.path.isdir(folder_path):
+def extract_geotiff_links(folder_path, debug_mode):
+    #if not os.path.isdir(folder_path):- this fails in Pilot ops even if it is a valid dir
     #    print("The folder path you provided is not a valid directory.")
     #    return None
     bucket_name = errorChecking.determine_valid_bucket(folder_path)
@@ -26,7 +26,6 @@ def extract_geotiff_links(folder_path):
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(bucket_name)
         geotiff_links = []
-        print("file path: "+file_path+ " bucket name: "+bucket_name)
         for obj in bucket.objects.filter(Prefix=file_path):
             if obj.size and file_ending(obj.key) and obj.key[len(file_path)+1:].find("/") == -1: 
                 # If looking in s3 bucket, then can hard code in s3:// because that must be the beginning
@@ -35,8 +34,11 @@ def extract_geotiff_links(folder_path):
         print(sys.exc_info())
         print("Error reading file contents from bucket. This is likely a permissions error.")
         return None
-
-    print("Geotiff links extracted from given folder are: "+str(geotiff_links))
+    if debug_mode:
+        print("Geotiff links extracted from given folder are: "+str(geotiff_links))
+    if len(geotiffs) == 0:
+        print("No GeoTIFFs found in the given folder.")
+        return None
     return geotiff_links
 
     
@@ -75,6 +77,7 @@ def determine_environment_list(urls):
     return required_info.endpoint_published_data
 
 # Returns False if the ending type of the file is not .tif or any other valid ending type and True if it is
+# Expects that s3Link is a string (would be an internal not user error if it is not)
 def file_ending(s3Link):
     for valid_ending in required_info.required_ends:
         if s3Link[len(valid_ending)*-1:] == valid_ending:

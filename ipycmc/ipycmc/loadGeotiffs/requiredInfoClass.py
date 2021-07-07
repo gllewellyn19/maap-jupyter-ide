@@ -13,7 +13,7 @@ import sys
 json_file_name = "variables.json"
 
 class RequiredInfoClass:
-    def __init__(self):
+    def __init__(self, debug_mode):
         try:
             f = open(os.path.abspath(__file__).replace(os.path.basename(__file__), json_file_name), "r")
             dictionary = json.loads(f.read())
@@ -53,8 +53,9 @@ class RequiredInfoClass:
             return
 
         self.setup_successful = True
-        self.check_non_empty_all()
-        self.other_error_checking([self.posting_tiler_endpoint, self.endpoint_published_data] + list(self.endpoints_tiler.values()))
+        if debug_mode:
+            self.check_non_empty_all()
+            self.other_error_checking([self.posting_tiler_endpoint, self.endpoint_published_data] + list(self.endpoints_tiler.values()))
         
     # Note that not all variables are required to be non empty
     def check_non_empty_all(self):

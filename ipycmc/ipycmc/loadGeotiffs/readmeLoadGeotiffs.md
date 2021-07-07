@@ -86,6 +86,10 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
     "default_handle_as": "wmts/xml",
     "default_ops_load_layer_config": {"handleAs": "wmts_raster"}
    }
+   
+### Debug mode
+Error checking done:
+Note running not in debug mode is a large risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. 
 
 ### Troubleshooting
 Rerun the loadGeotiff function if the map layer does not show up the first time.
