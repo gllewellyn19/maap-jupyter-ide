@@ -14,11 +14,30 @@ from . import errorChecking
 from . import extractInfoLinks
 from . import createUrl
 from . import requiredInfoClass
+from . import timeAnalysis
 
 json_file_name = "variables.json"
 global required_info
 
-def loadGeotiffs(urls, default_ops, debug_mode):
+def load_geotiffs(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+    try:
+        if time_analysis:
+            return_url,handle_as_varjson,default_ops_load_layer_varjson = timeAnalysis.conduct_time_analysis(urls, default_ops, debug_mode)
+        else:    
+            return_url,handle_as_varjson,default_ops_load_layer_varjson = load_geotiffs_base(urls, default_ops, debug_mode)
+        print("Request url generated: " + str(return_url))
+        if return_url != None:
+            if not handle_as:
+                handle_as = handle_as_varjson
+            if not default_ops_load_layer:
+                default_ops_load_layer = default_ops_load_layer_varjson
+        return return_url,handle_as,default_ops_load_layer
+    except:
+        print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
+        print("Error message: " + str(sys.exc_info()))
+        return None,None,None
+
+def load_geotiffs_base(urls, default_ops, debug_mode):
     """Main function that handles the users request
     Parameters
     ----------
@@ -31,13 +50,8 @@ def loadGeotiffs(urls, default_ops, debug_mode):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    global required_info
-    required_info = requiredInfoClass.RequiredInfoClass(debug_mode)
-    if not required_info.setup_successful:
+    if not init_required_info():
         return None, None, None
-    errorChecking.initialize_required_info(required_info)
-    extractInfoLinks.initialize_required_info(required_info)
-    createUrl.initialize_required_info(required_info)
 
     # Check the type and format of the URLs passed into the function
     if debug_mode and errorChecking.check_valid_arguments(urls) == False:
@@ -120,3 +134,13 @@ def create_request_multiple_geotiffs(urls, default_ops, debug_mode):
     if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):
         return None
     return newUrl
+
+def init_required_info():
+    global required_info
+    required_info = requiredInfoClass.RequiredInfoClass(debug_mode)
+    if not required_info.setup_successful:
+        return False
+    errorChecking.initialize_required_info(required_info)
+    extractInfoLinks.initialize_required_info(required_info)
+    createUrl.initialize_required_info(required_info)
+    return True

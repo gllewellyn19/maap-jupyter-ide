@@ -54,20 +54,12 @@ class MapCMC(DOMWidget, InteractMixin):
     def load_layer_config(self, url, handle_as, default_ops = {}):
         self._argv = ["loadLayerConfig", url, handle_as, default_ops]
 
-    def load_geotiffs(self, urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True):
-        try:
-            return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.loadGeotiffs(urls, default_ops, debug_mode)
-        except:
-            print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
-            print("Error message: " + str(sys.exc_info()))
-            return
-        print("Request url generated: " + str(return_url))
+    def load_geotiffs(self, urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False):
+        return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs(urls, default_ops, handle_as, 
+            default_ops_load_layer, debug_mode, time_analysis)
         if return_url != None:
-            if not handle_as:
-                handle_as = handle_as_varjson
-            if not default_ops_load_layer:
-                default_ops_load_layer = default_ops_load_layer_varjson
             self._argv = ["loadLayerConfig", return_url, handle_as, default_ops_load_layer]
+            print("After self argument- means i should implement for everything")
         
     def set_date(self, date_str, format_str=""):
         self._argv = ["setDate", date_str, format_str]
