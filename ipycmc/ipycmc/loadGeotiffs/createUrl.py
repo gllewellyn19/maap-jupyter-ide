@@ -52,29 +52,9 @@ def create_mosaic_json(urls):
 
     with futures.ThreadPoolExecutor(max_workers=5) as executor:
         features = [r for r in executor.map(worker, files) if r]
-
-    if features == []:
-        print("features is empty, assigning it")
-        features = [{'geometry': {'type': 'Polygon',
-            'coordinates': [[[-101.00013888888888, 46.00013888888889],
-                [-101.00013888888888, 44.999861111111116],
-                [-99.9998611111111, 44.999861111111116],
-                [-99.9998611111111, 46.00013888888889],
-                [-101.00013888888888, 46.00013888888889]]]},
-            'properties': {'path': 's3://nasa-maap-data-store/file-staging/nasa-map/SRTMGL1_COD___001/N45W101.SRTMGL1.tif'},
-            'type': 'Feature'},
-            {'geometry': {'type': 'Polygon',
-            'coordinates': [[[-102.00013888888888, 46.00013888888889],
-                [-102.00013888888888, 44.999861111111116],
-                [-100.9998611111111, 44.999861111111116],
-                [-100.9998611111111, 46.00013888888889],
-                [-102.00013888888888, 46.00013888888889]]]},
-            'properties': {'path': 's3://nasa-maap-data-store/file-staging/nasa-map/SRTMGL1_COD___001/N45W102.SRTMGL1.tif'},
-            'type': 'Feature'}]
     
     mosaic_data = MosaicJSON.from_features(features, minzoom=10, maxzoom=18).json()
-    mosaic_data_json = json.loads(mosaic_data)
-    return mosaic_data_json
+    return json.loads(mosaic_data)
     
 def create_mosaic_json_from_urls(urls):
     os.environ['CURL_CA_BUNDLE']='/etc/ssl/certs/ca-certificates.crt'

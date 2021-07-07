@@ -15,6 +15,7 @@ from . import extractInfoLinks
 from . import createUrl
 from . import requiredInfoClass
 from . import timeAnalysis
+import sys
 
 json_file_name = "variables.json"
 global required_info
@@ -50,7 +51,7 @@ def load_geotiffs_base(urls, default_ops, debug_mode):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    if not init_required_info():
+    if not init_required_info(debug_mode):
         return None, None, None
 
     # Check the type and format of the URLs passed into the function
@@ -135,7 +136,7 @@ def create_request_multiple_geotiffs(urls, default_ops, debug_mode):
         return None
     return newUrl
 
-def init_required_info():
+def init_required_info(debug_mode):
     global required_info
     required_info = requiredInfoClass.RequiredInfoClass(debug_mode)
     if not required_info.setup_successful:

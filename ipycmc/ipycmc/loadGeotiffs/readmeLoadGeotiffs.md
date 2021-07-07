@@ -70,9 +70,9 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
  * `defaults_tiler`: The default values to pass in the request url to the tiler represented as a dictionary where the key is the name of a variable that the tiler accepts and the value is the value of that variable. Note that these values can be provided by the user. If these values are not provided by the user, they will be passed into the request url as is from this variable. This is because the tiles may not display without these defaults, especially the `rescale` option.
  * `endpoints_tiler`: Dictionary where the key representing the workspace bucket name of MAAP ade environments supported by this function and the values represent the tiler endpoint that these environments are compatible with. Note that currently only gcc ops and Pilot ops are supposed by this function (maap-ops-workspace found at [https://ade.ops.maap-project.org/](https://ade.ops.maap-project.org/) and maap-ops-dataset found at [https://ade.maap-project.org/](https://ade.maap-project.org/))
  * `tiler_extensions`: Since a user can either pass a singel geotiff or multiple geotiffs, this variable indicates the extension to the request url to the TiTiler for either a single geotiff or multiple geotiffs. These representing supported extensions to TiTiler endpoints.
- * `endpoint_published_data`: This represents the TiTiler endpoint to used for published data. Unlike `endpoints_tiler` published data doesn't need to use a certain TiTiler endpoint. By default it uses the Tiler ops endpoint, but that can be changed at any time by modifying this variable
- * 
-    "posting_tiler_endpoint": "https://h9su0upami.execute-api.us-east-1.amazonaws.com",
+ * `endpoint_published_data`: This represents the TiTiler endpoint to used for published data. Unlike `endpoints_tiler` published data doesn't need to use a certain TiTiler endpoint. By default it uses the Tiler ops endpoint, but that can be changed at any time by modifying this variable.
+ * `posting_tiler_endpoint`: This represents the TiTiler endpoint that has the capability of posting a mosaicjson and receiving the link later
+ * "https://h9su0upami.execute-api.us-east-1.amazonaws.com",
     "errors_tiler": {"not recognized as a supported file format.":"You have entered an invalid file path that does not exist or the TiTiler does not have access to.", "Access Denied":"The Tiler does not have access to the file path that you have provided, please give a maap s3 bucket or published data."},
     "accepted_arguments_tiler":["minzoom", "maxzoom", "bidx", "expression", "nodata", "unscale", "color_formula", "colormap_name", "colormap"],
     "mosaicjson_file_name":"mosaicjson.json",
@@ -88,8 +88,10 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
    }
    
 ### Debug mode
-Error checking done:
-Note running not in debug mode is a large risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. 
+Running not in debug mode is a risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. If you receive an error message you do not understand, run the problem in debug mode. Debug mode is enabled by default.
+
+### Time analysis
+The only difference setting this parameter to True is that the function call is done twice (once with debug mode and once without) and the results are printed. The request url generated for the given parameters including the given `debug_mode` are sent to  load\_layer\_config as the function normally does. This function takes longer to run and the only purpose of it is to show the effects of `debug_mode` so that users can decide if they would like to run in that mode. Note that `time_analysis` is False by default. 
 
 ### Troubleshooting
 Rerun the loadGeotiff function if the map layer does not show up the first time.

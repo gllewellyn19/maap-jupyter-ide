@@ -19,7 +19,6 @@ from ._frontend import module_name, module_version
 from .loadGeotiffs import loadGeotiffs
 
 import os
-import sys
 
 class InteractMixin(object):
 
@@ -59,7 +58,6 @@ class MapCMC(DOMWidget, InteractMixin):
             default_ops_load_layer, debug_mode, time_analysis)
         if return_url != None:
             self._argv = ["loadLayerConfig", return_url, handle_as, default_ops_load_layer]
-            print("After self argument- means i should implement for everything")
         
     def set_date(self, date_str, format_str=""):
         self._argv = ["setDate", date_str, format_str]
