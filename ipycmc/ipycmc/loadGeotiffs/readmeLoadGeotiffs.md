@@ -66,11 +66,12 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
 
 ## Documentation for variables.json
 * `required_starts`: How the urls must begin in order for function to complete successfully
-* `required_ends`: Hows the urls must end in order for function to complete successfully. Note that in the case of a folder for urls, the folder should not end in one of `required_ends`, but the contents of the folder should
-    "defaults_tiler":{"tile_format":"png", "tile_scale":1, "pixel_selection":"first", "TileMatrixSetId":"WebMercatorQuad", "resampling_method":"nearest", "return_mask":"true", "rescale":"0%2C1000"},
-    "endpoints_tiler":{"maap-ops-workspace":"https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com", "maap-ops-dataset":"https://h9su0upami.execute-api.us-east-1.amazonaws.com"},
-    "tiler_extensions":{"single":"/cog/WMTSCapabilities.xml?","multiple":"/mosaicjson/WMTSCapabilities.xml?"},
-    "endpoint_published_data": "https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com",
+* `required_ends`: Hows the urls must end in order for function to complete successfully. Note that in the case of a folder for urls, the folder should not end in one of `required_ends`, but the contents of the folder should end in one of `required_ends`
+ * `defaults_tiler`: The default values to pass in the request url to the tiler represented as a dictionary where the key is the name of a variable that the tiler accepts and the value is the value of that variable. Note that these values can be provided by the user. If these values are not provided by the user, they will be passed into the request url as is from this variable. This is because the tiles may not display without these defaults, especially the `rescale` option.
+ * `endpoints_tiler`: Dictionary where the key representing the workspace bucket name of MAAP ade environments supported by this function and the values represent the tiler endpoint that these environments are compatible with. Note that currently only gcc ops and Pilot ops are supposed by this function (maap-ops-workspace found at [https://ade.ops.maap-project.org/](https://ade.ops.maap-project.org/) and maap-ops-dataset found at [https://ade.maap-project.org/](https://ade.maap-project.org/))
+ * `tiler_extensions`: Since a user can either pass a singel geotiff or multiple geotiffs, this variable indicates the extension to the request url to the TiTiler for either a single geotiff or multiple geotiffs. These representing supported extensions to TiTiler endpoints.
+ * `endpoint_published_data`: This represents the TiTiler endpoint to used for published data. Unlike `endpoints_tiler` published data doesn't need to use a certain TiTiler endpoint. By default it uses the Tiler ops endpoint, but that can be changed at any time by modifying this variable
+ * 
     "posting_tiler_endpoint": "https://h9su0upami.execute-api.us-east-1.amazonaws.com",
     "errors_tiler": {"not recognized as a supported file format.":"You have entered an invalid file path that does not exist or the TiTiler does not have access to.", "Access Denied":"The Tiler does not have access to the file path that you have provided, please give a maap s3 bucket or published data."},
     "accepted_arguments_tiler":["minzoom", "maxzoom", "bidx", "expression", "nodata", "unscale", "color_formula", "colormap_name", "colormap"],
@@ -87,7 +88,7 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
    }
 
 ### Troubleshooting
-Rerun the loadGeotiff function if the map layer does not show up the first time
+Rerun the loadGeotiff function if the map layer does not show up the first time.
 
 ### To do
 * Find best way to show function parameters and mark as optional at the top
