@@ -25,7 +25,10 @@ def check_valid_arguments(urls):
         if check_environments_same(urls) == False:
             return False
         for url in urls:
-            if check_valid_s3_link(url) == False or extractInfoLinks.file_ending(url) == False:
+            if check_valid_s3_link(url) == False:
+                return False
+            if extractInfoLinks.file_ending(url) == False:
+                print(url + " doesn't end in one of " + (', '.join([str(elem) for elem in required_info.required_ends])) + ".")
                 return False
         return True
     else:
@@ -114,9 +117,9 @@ def check_valid_default_arguments(default_ops):
 
 # Determines if the Tiler can access the links by passing them link a single GeoTIFF into the file. The create_request_single_geotiff function only returns
 # None if the default ops are incorrect (impossible because we are passing an empty list) or the response of the request url contains errors
-def tiler_can_access_links(urls):
+def tiler_can_access_links(urls, debug_mode):
     for url in urls:
-        if loadGeotiffs.create_request_single_geotiff(url, {}) == None:
+        if loadGeotiffs.create_request_single_geotiff(url, {}, debug_mode) == None:
             print("Invalid url: " + url + ".")
             return False
     return True

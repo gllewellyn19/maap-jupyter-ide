@@ -59,7 +59,7 @@ class MapCMC(DOMWidget, InteractMixin):
             return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.loadGeotiffs(urls, default_ops, debug_mode)
         except:
             print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
-            print("Error message: " + str(sys.exc_info()[0]))
+            print("Error message: " + str(sys.exc_info()))
             return
         print("Request url generated: " + str(return_url))
         if return_url != None:

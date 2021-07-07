@@ -75,7 +75,7 @@ def create_request_single_geotiff(s3Url, default_ops, debug_mode):
     if endpoint_tiler == None:
         endpoint_tiler = required_info.endpoint_published_data
     newUrl = endpoint_tiler + required_info.tiler_extensions.get("single") + "url=" + s3Url
-    newUrl = createUrl.add_defaults_url(newUrl, default_ops)
+    newUrl = createUrl.add_defaults_url(newUrl, default_ops, debug_mode)
     if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):
         return None
     return newUrl
@@ -97,9 +97,9 @@ def create_request_folder_geotiffs(urls, default_ops, debug_mode):
     if geotiffs == None:
         return None
     if len(geotiffs) == 1:
-        return create_request_single_geotiff(geotiffs[0], default_ops)
+        return create_request_single_geotiff(geotiffs[0], default_ops, debug_mode)
     else:
-        return create_request_multiple_geotiffs(geotiffs, default_ops)
+        return create_request_multiple_geotiffs(geotiffs, default_ops, debug_mode)
 
 def create_request_multiple_geotiffs(urls, default_ops, debug_mode):
     """Creates the request url in the case of a links of s3 links to Geotiff files
@@ -114,7 +114,7 @@ def create_request_multiple_geotiffs(urls, default_ops, debug_mode):
     str
         a request url to be passed to load_layer_config or None in the case of error
     """
-    if debug_mode and (not errorChecking.tiler_can_access_links(urls)):
+    if debug_mode and (not errorChecking.tiler_can_access_links(urls, debug_mode)):
         return None
     newUrl = createUrl.create_mosaic_json_url(urls, default_ops, debug_mode)
     if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):

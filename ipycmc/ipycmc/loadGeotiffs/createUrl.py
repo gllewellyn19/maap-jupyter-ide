@@ -71,9 +71,6 @@ def create_mosaic_json(urls):
                 [-102.00013888888888, 46.00013888888889]]]},
             'properties': {'path': 's3://nasa-maap-data-store/file-staging/nasa-map/SRTMGL1_COD___001/N45W102.SRTMGL1.tif'},
             'type': 'Feature'}]
-    else:
-        print("features is not empty and is: ")
-        print(features)
     
     mosaic_data = MosaicJSON.from_features(features, minzoom=10, maxzoom=18).json()
     mosaic_data_json = json.loads(mosaic_data)

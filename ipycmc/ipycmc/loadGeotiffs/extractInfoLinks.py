@@ -36,7 +36,7 @@ def extract_geotiff_links(folder_path, debug_mode):
         return None
     if debug_mode:
         print("Geotiff links extracted from given folder are: "+str(geotiff_links))
-    if len(geotiffs) == 0:
+    if len(geotiff_links) == 0:
         print("No GeoTIFFs found in the given folder.")
         return None
     return geotiff_links
