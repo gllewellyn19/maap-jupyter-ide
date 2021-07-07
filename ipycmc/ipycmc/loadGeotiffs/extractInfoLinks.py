@@ -12,21 +12,22 @@ def initialize_required_info(required_info_given):
 # Extracts the list of geotiff links from the folder path. Returns None if the folder path is not reachable and only returns the names of files that end in
 # required_end_s3_link_lowercase or required_end_s3_link_uppercase
 def extract_geotiff_links(folder_path, debug_mode):
-    #if not os.path.isdir(folder_path):- this fails in Pilot ops even if it is a valid dir
-    #    print("The folder path you provided is not a valid directory.")
-    #    return None
+    if not os.path.isdir(folder_path):- this fails in Pilot ops even if it is a valid dir
+        print("There is a change folder path you provided is not a valid directory.")
+        return None
     bucket_name = errorChecking.determine_valid_bucket(folder_path)
     if bucket_name == None:
         print("The environment of the bucket you passed as a folder is not a valid environment type. The supported environments are: " +  
             (', '.join([str(key) for key in required_info.endpoints_tiler])) + ".")
         return None
-    file_path = get_file_path_folder(folder_path)
+    file_path = get_file_path_folder(folder_path) + "/"
 
     try:
         s3 = boto3.resource('s3')
         bucket = s3.Bucket(bucket_name)
         geotiff_links = []
         for obj in bucket.objects.filter(Prefix=file_path):
+            # Check makes sure that geotiffs below file path are not added
             if obj.size and file_ending(obj.key) and obj.key[len(file_path)+1:].find("/") == -1: 
                 # If looking in s3 bucket, then can hard code in s3:// because that must be the beginning
                 geotiff_links.append("s3://" + bucket_name + "/" + obj.key)
@@ -37,7 +38,10 @@ def extract_geotiff_links(folder_path, debug_mode):
     if debug_mode:
         print("Geotiff links extracted from given folder are: "+str(geotiff_links))
     if len(geotiff_links) == 0:
-        print("No GeoTIFFs found in the given folder.")
+        if not os.path.isdir(folder_path):
+            print("The folder path you provided is not a valid directory.")
+        else:
+            print("No GeoTIFFs found in the given folder.")
         return None
     return geotiff_links
 
