@@ -57,18 +57,15 @@ class RequiredInfoClass:
             self.other_error_checking([self.posting_tiler_endpoint, self.endpoint_published_data] + list(self.endpoints_tiler.values()))
         
     # Note that not all variables are required to be non empty
+    # Print all variables that are empty that need to be filled at once for the user
     def check_non_empty_all(self):
-        if self.empty(self.required_starts, "required_starts") or self.empty(self.required_ends, "required_ends") or self.empty(self.defaults_tiler, "defaults_tiler") or self.empty(self.endpoints_tiler, "endpoints_tiler") or self.empty(self.tiler_extensions, "tiler_extensions") or self.empty(self.endpoint_published_data, "endpoint_published_data") or self.empty(self.general_error_warning_tiler, "general_error_warning_tiler") or self.empty(self.required_class_types_args_tiler, "required_class_types_args_tiler") or self.empty(self.correct_wmts_beginning, "correct_wmts_beginning") or self.empty(self.posting_tiler_endpoint, "posting_tiler_endpoint") or self.empty(self.handle_as, "default_handle_as") or self.empty(self.default_ops_load_layer_config, "default_ops_load_layer_config") or self.empty(self.getting_wmts_endpoint, "getting_wmts_endpoint"):
-            self.setup_successful = False
-        for key in self.accepted_arguments_default_ops:
-            if self.empty(self.accepted_arguments_default_ops[key], key)
-                self.setup_successful = False
-
-    def empty(self, var, var_name):
-        if not var:
-            print("Cannot pass an empty value for " + var_name + " in variables.json file.")
-            return True
-        return False
+        to_return = True
+        variables = vars(self)
+        for key in variables:
+            if not variables[key]:
+                print("Cannot pass an empty value for " + key + " in variables.json file.")
+                to_return = False
+        return to_return
     
     def other_error_checking(self, links):
         for link in links:

@@ -2,6 +2,7 @@ import json
 from . import loadGeotiffs
 from . import extractInfoLinks
 import requests
+from varname import nameof
 
 global required_info
 
@@ -9,10 +10,26 @@ def initialize_required_info(required_info_given):
     global required_info
     required_info = required_info_given
 
+# Should print all errors that the user has with the arguments
+def check_valid_arguments(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+    urls_valid = check_valid_arguments_urls(urls)
+    args_valid = check_correct_classes_args(default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
+    return urls_valid and args_valid
+
+def check_correct_classes_args(default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+    return check_correct_class_arg(default_ops, dict) and check_correct_class_arg(handle_as, str) and check_correct_class_arg(default_ops_load_layer, dict)
+    and check_correct_class_arg(debug_mode, bool) and check_correct_class_arg(time_analysis, bool)
+
+def check_correct_class_arg(arg, class_type):
+    if not isinstance(arg, class_type):
+        print(nameof(arg) + " should be a " + str(class_type))
+        return False
+    return True
+
 # Returns False if arguments are invalid and prints appropriate error messages. Reasons that links can be invalid are:
 # String: Empty string, doesn't start with s3://, doesn't end with .tiff
 # List: Empty list, one of links doesn't start with s3://, one of links doesn't end with .tiff, not all links are from the same environment
-def check_valid_arguments(urls):
+def check_valid_arguments_urls(urls):
     if isinstance(urls, str):
         if not urls:
             print("You have provided an empty string. Please provide s3 link(s).")

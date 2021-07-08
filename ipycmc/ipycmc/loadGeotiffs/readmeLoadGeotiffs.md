@@ -1,30 +1,40 @@
 # README for load\_geotiff function
 ## Arguments
 MapCMC.load\_geotiffs(urls, default\_ops (Optional), handle\_as (Optional), default\_ops\_load\_layer (Optional)).
-Function call must be on a MapCMC object.
-* Urls, where urls must be:
+Function call must be on a MapCMC object. 
+Function definition: 
+```
+w.load_geotiffs(urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False)
+```
+Function call must be on a MapCMC object. For example, 
+```
+w = ipycmc.MapCMC()
+w
+w.load_geotiffs(urls="", default_ops={"colormap_name":"autumn", "pixel_selection":"mean"}, handle_as="wmts/xml")
+```
+* `urls`, where urls must be:
 	*  a string consisting of a single link to a geotiff in an s3 bucket in the MAAP ade (private or bucket bucket will suffice). Currently, this string must start with "s3://" and end with ".tif" or ".tiff". However, this can be changed by modifying the `required_start` and `required_end` lists in variables.json. Even if these arguments are changed, if the beginning and ending types of the links do not comply with the TiTiler requirements, an error message will be returned.
     * a list consisting of links to geotiffs where each link follows all the guidlines listed above 
     * a string pointing to a folder in an s3 bucket. All files in this folder will be added to a list as long as they end in one of `required_end`
-* default\_ops
-	* tile\_format
-   * tile\_scale
-   * pixel\_selection 
-   * TileMatrixSetId
-   * resampling\_method 
-   * return\_mask
-   * rescale
+* `default_ops`, 
+	* `tile_format`
+   * `tile_scale`
+   * `pixel_selection` 
+   * `TileMatrixSetId`
+   * `resampling_method`
+   * `return_mask`
+   * `rescale`
    
     __Additional arguments you can add that are not typically added as defaults (Note: you can change the defaults by modifying `defaults_tiler` in variables.json:)__
-   * minzoom 
-   * maxzoom 
-   * bidx 
-   * expression 
-   * nodata 
-   * unscale 
-   * color\_formula
-   * colormap\_name 
-   * colormap
+   * `minzoom`
+   * `maxzoom`
+   * `bidx` 
+   * `expression` 
+   * `nodata` 
+   * `unscale` 
+   * `color_formula`
+   * `colormap_name` 
+   * `colormap`
    
    __For more documentation about these arguments, please visit:__
    
@@ -81,8 +91,8 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
  * `pixel_selection_args`: This list represents the accepted arguments for the `pixel_selection` variable. If TiTiler changes then this variable might need to change as well. 
   * `getting_xml_endpoint`: This is the code that executes to extract the wmts endpoint from the mosaic json request post. For this code to execute correctly, the request variable needs to be named r. If the formatting of TiTiler endpoint request posts changes, then this variable may need to change as well. 
   * `web_starts`: All TiTiler endpoints (`posting_tiler_endpoint`, `endpoint_published_data`, `endpoints_tiler.values()`) are required to start with one of these `web_starts`. This variable may be changed if you only want secure endpoints, i.e. change this to just a list of https://. Links starting with s3:// fall into a separate category than the TiTiler endpoints
- * `default_handle_as`: Default `handle_as` argument for load\_layer\_config. For more on documentation see INSERT LINK
- * `default_ops_load_layer_config`: Default `default_ops` argument for load\_layer\_config. For more on documentation see INSERT LINK
+ * `default_handle_as`: Default `handle_as` argument for load\_layer\_config. For more on documentation see [https://github.com/MAAP-Project/maap-jupyter-ide/blob/develop/user\_guides/ipycmc.md#class-mapcmc](https://github.com/MAAP-Project/maap-jupyter-ide/blob/develop/user_guides/ipycmc.md#class-mapcmc)
+ * `default_ops_load_layer_config`: Default `default_ops` argument for load\_layer\_config. For more on documentation see [https://github.com/MAAP-Project/maap-jupyter-ide/blob/develop/user\_guides/ipycmc.md#class-mapcmc](https://github.com/MAAP-Project/maap-jupyter-ide/blob/develop/user_guides/ipycmc.md#class-mapcmc)
    
 ### Debug mode
 Running not in debug mode is a risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. If you receive an error message you do not understand, run the problem in debug mode. Debug mode is enabled by default.

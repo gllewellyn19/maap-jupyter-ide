@@ -23,9 +23,9 @@ global required_info
 def load_geotiffs(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
     try:
         if time_analysis:
-            return_url,handle_as_varjson,default_ops_load_layer_varjson = timeAnalysis.conduct_time_analysis(urls, default_ops, debug_mode)
+            return_url,handle_as_varjson,default_ops_load_layer_varjson = timeAnalysis.conduct_time_analysis(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
         else:    
-            return_url,handle_as_varjson,default_ops_load_layer_varjson = load_geotiffs_base(urls, default_ops, debug_mode)
+            return_url,handle_as_varjson,default_ops_load_layer_varjson = load_geotiffs_base(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
         print("Request url generated: " + str(return_url))
         if return_url != None:
             if not handle_as:
@@ -38,7 +38,7 @@ def load_geotiffs(urls, default_ops, handle_as, default_ops_load_layer, debug_mo
         print("Error message: " + str(sys.exc_info()))
         return None,None,None
 
-def load_geotiffs_base(urls, default_ops, debug_mode):
+def load_geotiffs_base(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
     """Main function that handles the users request
     Parameters
     ----------
@@ -55,7 +55,7 @@ def load_geotiffs_base(urls, default_ops, debug_mode):
         return None, None, None
 
     # Check the type and format of the URLs passed into the function
-    if debug_mode and errorChecking.check_valid_arguments(urls) == False:
+    if debug_mode and errorChecking.check_valid_arguments(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis) == False:
         return None, None, None
 
     request_url = None 
