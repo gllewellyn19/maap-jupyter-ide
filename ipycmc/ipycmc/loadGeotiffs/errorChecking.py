@@ -44,7 +44,7 @@ def check_errors_request_url(request_url):
         if error in response:
             print(required_info.errors_tiler[error])
             return True
-    if response[0] != required_info.xml_beginning:
+    if response[0] != required_info.correct_wmts_beginning:
         print(required_info.general_error_warning_tiler + response)
         return True
     return False
@@ -97,7 +97,7 @@ def get_printable_list_from_dict(dictionary):
 def check_valid_default_arguments(default_ops):
     for key in default_ops:
         try:
-            if (not key in required_info.defaults_tiler) and (not key in required_info.accepted_arguments_tiler):
+            if (not key in required_info.defaults_tiler) and (not key in required_info.accepted_parameters_tiler):
                 print("The key you are trying to pass as a default argument key to the Tiler, " + key + " is not an accepted default type. The accepted argument types are: " + 
                 (', '.join([str(key) for key in required_info.defaults_tiler])) + ", " + (', '.join([str(elem) for elem in required_info.accepted_arguments_tiler])) + ".")
                 return False

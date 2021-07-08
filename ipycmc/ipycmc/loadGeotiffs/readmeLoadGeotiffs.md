@@ -68,24 +68,21 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
 * `required_starts`: How the urls must begin in order for function to complete successfully
 * `required_ends`: Hows the urls must end in order for function to complete successfully. Note that in the case of a folder for urls, the folder should not end in one of `required_ends`, but the contents of the folder should end in one of `required_ends`
  * `defaults_tiler`: The default values to pass in the request url to the tiler represented as a dictionary where the key is the name of a variable that the tiler accepts and the value is the value of that variable. Note that these values can be provided by the user. If these values are not provided by the user, they will be passed into the request url as is from this variable. This is because the tiles may not display without these defaults, especially the `rescale` option.
+ * `accepted_parameters_tiler`: Similar to `defaults_tiler`, this variable represents parameters that can be passed to request url to TiTiler. These parameters don't need to be specified, but can be if the user wishes. More detail about these parameters can be found above.
  * `endpoints_tiler`: Dictionary where the key representing the workspace bucket name of MAAP ade environments supported by this function and the values represent the tiler endpoint that these environments are compatible with. Note that currently only gcc ops and Pilot ops are supposed by this function (maap-ops-workspace found at [https://ade.ops.maap-project.org/](https://ade.ops.maap-project.org/) and maap-ops-dataset found at [https://ade.maap-project.org/](https://ade.maap-project.org/))
- * `tiler_extensions`: Since a user can either pass a singel geotiff or multiple geotiffs, this variable indicates the extension to the request url to the TiTiler for either a single geotiff or multiple geotiffs. These representing supported extensions to TiTiler endpoints.
+ * `tiler_extensions`: Since a user can either pass a singel geotiff or multiple geotiffs, this variable indicates the extension to the request url to the TiTiler for either a single geotiff or multiple geotiffs. These represent supported extensions to TiTiler endpoints.
  * `endpoint_published_data`: This represents the TiTiler endpoint to used for published data. Unlike `endpoints_tiler` published data doesn't need to use a certain TiTiler endpoint. By default it uses the Tiler ops endpoint, but that can be changed at any time by modifying this variable.
- * `posting_tiler_endpoint`: This represents the TiTiler endpoint that has the capability of posting a mosaicjson and receiving the link later
- * "https://h9su0upami.execute-api.us-east-1.amazonaws.com",
-    "errors_tiler": {"not recognized as a supported file format.":"You have entered an invalid file path that does not exist or the TiTiler does not have access to.", "Access Denied":"The Tiler does not have access to the file path that you have provided, please give a maap s3 bucket or published data."},
-    "accepted_arguments_tiler":["minzoom", "maxzoom", "bidx", "expression", "nodata", "unscale", "color_formula", "colormap_name", "colormap"],
-    "mosaicjson_file_name":"mosaicjson.json",
-    "xml_beginning":"<",
-    "general_error_warning_tiler":"There was an error reading your link and Tiler gave the following error message: ",
-    "required_class_types_args_tiler":{"tile_scale":"int", "minzoom":"int", "maxzoom":"int", "bidx":"str", "expression":"str", "unscale":"bool", "rescale":"str", "color_formula":"str", "return_mask":"bool", "colormap":"str", "tile_format":"str", "TileMatrixSetId":"str", "resampling_method":"str", "colormap_name":"str", "pixel_selection":"str"},
-    "tile_format":["png", "jpg", "jpeg", "tif", "jp2", "npy", "webp", "pngraw"],
-    "pixel_selection":["first", "highest", "lowest", "mean", "median", "stdev"],
-    "getting_xml_endpoint":"list(filter(lambda x: x.get('rel') == 'wmts', dict(r)['links']))[0].get('href')",
-    "web_starts":["https://", "http://"],
-    "default_handle_as": "wmts/xml",
-    "default_ops_load_layer_config": {"handleAs": "wmts_raster"}
-   }
+ * `posting_tiler_endpoint`: This represents the TiTiler endpoint that has the capability of posting a mosaicjson so that link can later be fetched to create the request url to be passed to load\_layer\_config.
+  * `errors_tiler`: This is a dictionary where the keys are known TiTiler error messages that appear as the detail value in a TiTiler error message. The values are the appropriate response if one of these error messages is contained in the request url to pass to load\_layer\_config. If one of these errors is found, then the request url is not passed to load\_layer\_config and the function ends. The goal of this variables is to help decode the TiTiler error message for the likely MAAP ADE situation because they can be difficult to understand.
+ * `correct_wmts_beginning`: Typically the TiTiler returns correctly formatted wmts tiles as an xml object and returns an error message in JSON format. If that were to change, then this variable can be modified. If the content of the request url begins with `correct_wmts_beginning`, then the wmts request is considered correct. Otherwise, the correct error message is printed if it is contained in `errors_tiler` or the `general_error_warning_tiler` is printed.
+ * `general_error_warning_tiler`: If the contents of the request url does not begin with `correct_wmts_beginning` and none of the keys of `errors_tiler` are present in the error message, then this general error warning is printed along with the contents of the request url.
+ * `required_class_types_args_tiler`: For all parameters that the TiTiler endpoint accepts, this variable checks to make sure that the argument that the user passes is the correct class type that complies with what the TiTiler is expecting.
+ * `tile_format_args`: This list represents the accepted arguments for the `tile_format` variable. If TiTiler changes then this variable might need to change as well. 
+ * `pixel_selection_args`: This list represents the accepted arguments for the `pixel_selection` variable. If TiTiler changes then this variable might need to change as well. 
+  * `getting_xml_endpoint`: This is the code that executes to extract the wmts endpoint from the mosaic json request post. For this code to execute correctly, the request variable needs to be named r. If the formatting of TiTiler endpoint request posts changes, then this variable may need to change as well. 
+  * `web_starts`: All TiTiler endpoints (`posting_tiler_endpoint`, `endpoint_published_data`, `endpoints_tiler.values()`) are required to start with one of these `web_starts`. This variable may be changed if you only want secure endpoints, i.e. change this to just a list of https://. Links starting with s3:// fall into a separate category than the TiTiler endpoints
+ * `default_handle_as`: Default `handle_as` argument for load\_layer\_config. For more on documentation see INSERT LINK
+ * `default_ops_load_layer_config`: Default `default_ops` argument for load\_layer\_config. For more on documentation see INSERT LINK
    
 ### Debug mode
 Running not in debug mode is a risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. If you receive an error message you do not understand, run the problem in debug mode. Debug mode is enabled by default.

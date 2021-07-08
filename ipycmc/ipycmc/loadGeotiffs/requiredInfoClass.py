@@ -32,16 +32,15 @@ class RequiredInfoClass:
             self.endpoint_published_data = dictionary["endpoint_published_data"]
             self.posting_tiler_endpoint = dictionary["posting_tiler_endpoint"]
             self.errors_tiler = dictionary["errors_tiler"]
-            self.accepted_arguments_tiler = dictionary["accepted_arguments_tiler"]
-            self.mosaicjson_file_name = dictionary["mosaicjson_file_name"]
+            self.accepted_parameters_tiler = dictionary["accepted_parameters_tiler"]
             self.general_error_warning_tiler = dictionary["general_error_warning_tiler"]
             self.required_class_types_args_tiler = dictionary["required_class_types_args_tiler"]
-            self.xml_beginning = dictionary["xml_beginning"]
+            self.correct_wmts_beginning = dictionary["correct_wmts_beginning"]
             self.accepted_arguments_default_ops = {"TileMatrixSetId":[(entry["id"]) for entry in requests.get("https://api.cogeo.xyz/tileMatrixSets").json()["tileMatrixSets"]], 
                                  "resampling_method": [(r.name) for r in Resampling], 
                                  "colormap_name": cmap.list(),
-                                 "tile_format":dictionary["tile_format"],
-                                 "pixel_selection":dictionary["pixel_selection"]}
+                                 "tile_format_args":dictionary["tile_format_args"],
+                                 "pixel_selection_args":dictionary["pixel_selection_args"]}
             self.getting_wmts_endpoint = dictionary["getting_wmts_endpoint"]
             self.web_starts = dictionary["web_starts"]
             self.handle_as = dictionary["default_handle_as"]
@@ -59,9 +58,12 @@ class RequiredInfoClass:
         
     # Note that not all variables are required to be non empty
     def check_non_empty_all(self):
-        if self.empty(self.required_starts, "required_starts") or self.empty(self.required_ends, "required_ends") or self.empty(self.defaults_tiler, "defaults_tiler") or self.empty(self.endpoints_tiler, "endpoints_tiler") or self.empty(self.tiler_extensions, "tiler_extensions") or self.empty(self.endpoint_published_data, "endpoint_published_data") or self.empty(self.mosaicjson_file_name, "mosaicjson_file_name") or self.empty(self.general_error_warning_tiler, "general_error_warning_tiler") or self.empty(self.required_class_types_args_tiler, "required_class_types_args_tiler") or self.empty(self.xml_beginning, "xml_beginning") or self.empty(self.posting_tiler_endpoint, "posting_tiler_endpoint") or self.empty(self.handle_as, "default_handle_as") or self.empty(self.default_ops_load_layer_config, "default_ops_load_layer_config") or self.empty(self.getting_wmts_endpoint, "getting_wmts_endpoint"):
+        if self.empty(self.required_starts, "required_starts") or self.empty(self.required_ends, "required_ends") or self.empty(self.defaults_tiler, "defaults_tiler") or self.empty(self.endpoints_tiler, "endpoints_tiler") or self.empty(self.tiler_extensions, "tiler_extensions") or self.empty(self.endpoint_published_data, "endpoint_published_data") or self.empty(self.general_error_warning_tiler, "general_error_warning_tiler") or self.empty(self.required_class_types_args_tiler, "required_class_types_args_tiler") or self.empty(self.correct_wmts_beginning, "correct_wmts_beginning") or self.empty(self.posting_tiler_endpoint, "posting_tiler_endpoint") or self.empty(self.handle_as, "default_handle_as") or self.empty(self.default_ops_load_layer_config, "default_ops_load_layer_config") or self.empty(self.getting_wmts_endpoint, "getting_wmts_endpoint"):
             self.setup_successful = False
-        
+        for key in self.accepted_arguments_default_ops:
+            if self.empty(self.accepted_arguments_default_ops[key], key)
+                self.setup_successful = False
+
     def empty(self, var, var_name):
         if not var:
             print("Cannot pass an empty value for " + var_name + " in variables.json file.")
