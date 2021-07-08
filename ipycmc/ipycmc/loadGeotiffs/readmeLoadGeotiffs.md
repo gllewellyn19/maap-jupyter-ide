@@ -104,15 +104,5 @@ The only difference setting this parameter to True is that the function call is 
 Rerun the loadGeotiff function if the map layer does not show up the first time.
 
 ### To do
-* Find best way to show function parameters and mark as optional at the top
 * Maybe use from urls or from features depending on the file size
-* Find documentation about handle as and default ops for load layer config
 * Change tiler to TiTiler
-
-* What happens if I pass https:// to Tiler?
-* Add default handle\_as and default ops for load layer
-* Try Except in error reading from bucket
-* Make required\_ends and starts
-
-### Questions
-How much should I describe the default ops
