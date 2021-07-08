@@ -20,7 +20,7 @@ def initialize_required_info(required_info_given):
     required_info = required_info_given
 
 # Returns the list for a mosaic JSON for the given s3 links. Returns None in case of error and prints the appropriate error message
-def create_mosaic_json_url(urls, default_ops, debug_mode):
+def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
     # TODO error check in this function and potentially return None, remember to get None in loadGeotiffs
     mosaic_data_json = create_mosaic_json(urls)
     posting_endpoint = required_info.posting_tiler_endpoint
@@ -39,7 +39,7 @@ def create_mosaic_json_url(urls, default_ops, debug_mode):
         print("getting_wmts_endpoint variable unable to be evaluated from variables.json or error in request url "+r)
         return None
 
-    return add_defaults_url(xml_endpoint + "?", default_ops, debug_mode)
+    return add_defaults_url(xml_endpoint + "?", default_tiler_ops, debug_mode)
 
 # Creates a variable representing a mosaic JSON to pass to the Tiler
 def create_mosaic_json(urls):
@@ -85,15 +85,15 @@ def worker(meta):
     }
 
 # Adds the specified defaults onto the url taking user input into account. Returns None if errors in the user-given default arguments
-def add_defaults_url(url, default_ops, debug_mode):
-    if debug_mode and (not errorChecking.check_valid_default_arguments(default_ops)):
+def add_defaults_url(url, default_tiler_ops, debug_mode):
+    if debug_mode and (not errorChecking.check_valid_default_arguments(default_tiler_ops)):
         return None
 
     defaultValues = ""
     temp_defaults_tiler = copy.copy(required_info.defaults_tiler)
-    # If given no default_ops, this for loop will not run and all the rest of the default values will just be added
-    for key in default_ops:
-        defaultValues = defaultValues + "&" + key + "=" + default_ops[key]
+    # If given no default_tiler_ops, this for loop will not run and all the rest of the default values will just be added
+    for key in default_tiler_ops:
+        defaultValues = defaultValues + "&" + key + "=" + default_tiler_ops[key]
         if key in temp_defaults_tiler:
             temp_defaults_tiler.pop(key, None)
             

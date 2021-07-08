@@ -2,14 +2,14 @@ import time
 
 from . import loadGeotiffs
 
-def conduct_time_analysis(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+def conduct_time_analysis(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
     start = time.perf_counter()
-    return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs_base(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
+    return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
     end = time.perf_counter()
     time_debug = end - start
 
     start = time.perf_counter()
-    loadGeotiffs.load_geotiffs_base(urls, default_ops, handle_as, default_ops_load_layer, not debug_mode, time_analysis)
+    loadGeotiffs.load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_layer, not debug_mode, time_analysis)
     end = time.perf_counter()
     time_not_debug = end - start
 

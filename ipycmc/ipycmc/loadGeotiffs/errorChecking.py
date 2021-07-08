@@ -11,13 +11,13 @@ def initialize_required_info(required_info_given):
     required_info = required_info_given
 
 # Should print all errors that the user has with the arguments
-def check_valid_arguments(urls, default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+def check_valid_arguments(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
     urls_valid = check_valid_arguments_urls(urls)
-    args_valid = check_correct_classes_args(default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
+    args_valid = check_correct_classes_args(default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
     return urls_valid and args_valid
 
-def check_correct_classes_args(default_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
-    return check_correct_class_arg(default_ops, dict) and check_correct_class_arg(handle_as, str) and check_correct_class_arg(default_ops_load_layer, dict)
+def check_correct_classes_args(default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
+    return check_correct_class_arg(default_tiler_ops, dict) and check_correct_class_arg(handle_as, str) and check_correct_class_arg(default_ops_load_layer, dict)
     and check_correct_class_arg(debug_mode, bool) and check_correct_class_arg(time_analysis, bool)
 
 def check_correct_class_arg(arg, class_type):
@@ -111,21 +111,21 @@ def get_printable_list_from_dict(dictionary):
     return to_return  
 
 # Returns False if the arguments passed with the default ops is not an accepted argument for that key and True otherwise
-def check_valid_default_arguments(default_ops):
-    for key in default_ops:
+def check_valid_default_arguments(default_tiler_ops):
+    for key in default_tiler_ops:
         try:
             if (not key in required_info.defaults_tiler) and (not key in required_info.accepted_parameters_tiler):
                 print("The key you are trying to pass as a default argument key to the Tiler, " + key + " is not an accepted default type. The accepted argument types are: " + 
                 (', '.join([str(key) for key in required_info.defaults_tiler])) + ", " + (', '.join([str(elem) for elem in required_info.accepted_arguments_tiler])) + ".")
                 return False
-            elif (key in required_info.accepted_arguments_default_ops) and (default_ops[key] not in required_info.accepted_arguments_default_ops[key]):
+            elif (key in required_info.accepted_arguments_default_ops) and (default_tiler_ops[key] not in required_info.accepted_arguments_default_ops[key]):
                 accepted_args = required_info.accepted_arguments_default_ops[key]
                 print("The argument you are passing for " + key + " is not an accepted argument for that key. Try one of these instead: " +
                 ', '.join([str(elem) for elem in accepted_args]))
                 return False
-            elif not isinstance(default_ops[key], eval(required_info.required_class_types_args_tiler[key])): 
+            elif not isinstance(default_tiler_ops[key], eval(required_info.required_class_types_args_tiler[key])): 
                 print("The argument you are passing for " + key + " is not a valid class for this key. The class " + str(required_info.required_class_types_args_tiler[key]) + 
-                " is accepted, but you passed " + str(type(default_ops[key])) + ".")
+                " is accepted, but you passed " + str(type(default_tiler_ops[key])) + ".")
                 return False
         except:
             print("JSON file variable required_class_types_args_tiler is formatted incorrectly because " + required_info.required_class_types_args_tiler[key] + " is not a valid class type.")

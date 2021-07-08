@@ -4,19 +4,19 @@ MapCMC.load\_geotiffs(urls, default\_ops (Optional), handle\_as (Optional), defa
 Function call must be on a MapCMC object. 
 Function definition: 
 ```
-w.load_geotiffs(urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False)
+w.load_geotiffs(urls, default_tiler_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False)
 ```
 Function call must be on a MapCMC object. For example, 
 ```
 w = ipycmc.MapCMC()
 w
-w.load_geotiffs(urls="", default_ops={"colormap_name":"autumn", "pixel_selection":"mean"}, handle_as="wmts/xml")
+w.load_geotiffs(urls="", default_tiler_ops={"colormap_name":"autumn", "pixel_selection":"mean"}, handle_as="wmts/xml", default_ops_load_layer={"handleAs": "wmts_raster"})
 ```
 * `urls`, where urls must be:
 	*  a string consisting of a single link to a geotiff in an s3 bucket in the MAAP ade (private or bucket bucket will suffice). Currently, this string must start with "s3://" and end with ".tif" or ".tiff". However, this can be changed by modifying the `required_start` and `required_end` lists in variables.json. Even if these arguments are changed, if the beginning and ending types of the links do not comply with the TiTiler requirements, an error message will be returned.
     * a list consisting of links to geotiffs where each link follows all the guidlines listed above 
     * a string pointing to a folder in an s3 bucket. All files in this folder will be added to a list as long as they end in one of `required_end`
-* `default_ops`, 
+* `default_tiler_ops`, Arguments to be passed to the request url to the TiTiler. This variable must be a dictionary where the key is one of the parameters below and the value is the argument to be passed for that parameter. Note that `pixel_selection`, `tile_format`, `TileMatrixSetId`, `resampling_method`, and `colormap_name` can only be certain values that are specified in variables.json. 
 	* `tile_format`
    * `tile_scale`
    * `pixel_selection` 
@@ -36,7 +36,7 @@ w.load_geotiffs(urls="", default_ops={"colormap_name":"autumn", "pixel_selection
    * `colormap_name` 
    * `colormap`
    
-   __For more documentation about these arguments, please visit:__
+   __For more documentation about these arguments, please visit: [https://h9su0upami.execute-api.us-east-1.amazonaws.com/docs#](https://h9su0upami.execute-api.us-east-1.amazonaws.com/docs#)__
    
  * handle\_as
     * Default is "wmts/xml", but this can be changed by modifying `default_handle_as` in variables.json 
@@ -56,9 +56,9 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
 * Urls is non-empty
 * Urls (and every element if list) begins with one of `required_starts`
 * If list of urls, each element has the same s3 bucket name
-* One of the keys passed for `default_ops` is not found as a valid key in `defaults_tiler` or `accepted_arguments_tiler`
-* One of the parameters passed for `default_ops` is not the correct class type 
-* One of the parameters passed for `default_ops` is not one of the values accepted for the finite list of accepted arguments (i.e. for the parameters `TileMatrixSetId`, `resampling_method`, `colormap_name`, `tile_format`, and `pixel_selection`)
+* One of the keys passed for `default_tiler_ops` is not found as a valid key in `defaults_tiler` or `accepted_arguments_tiler`
+* One of the parameters passed for `default_tiler_ops` is not the correct class type 
+* One of the parameters passed for `default_tiler_ops` is not one of the values accepted for the finite list of accepted arguments (i.e. for the parameters `TileMatrixSetId`, `resampling_method`, `colormap_name`, `tile_format`, and `pixel_selection`)
 
 ##### More advanced argument error checking
 * s3 bucket name of s3 link is not one of `endpoints_tiler.keys()`

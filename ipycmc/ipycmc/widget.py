@@ -53,8 +53,8 @@ class MapCMC(DOMWidget, InteractMixin):
     def load_layer_config(self, url, handle_as, default_ops = {}):
         self._argv = ["loadLayerConfig", url, handle_as, default_ops]
 
-    def load_geotiffs(self, urls, default_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False):
-        return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs(urls, default_ops, handle_as, 
+    def load_geotiffs(self, urls, default_tiler_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False):
+        return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs(urls, default_tiler_ops, handle_as, 
             default_ops_load_layer, debug_mode, time_analysis)
         if return_url != None:
             self._argv = ["loadLayerConfig", return_url, handle_as, default_ops_load_layer]
