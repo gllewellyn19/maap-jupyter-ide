@@ -57,7 +57,7 @@ class MapCMC(DOMWidget, InteractMixin):
         return_url,handle_as_varjson,default_ops_load_layer_varjson = loadGeotiffs.load_geotiffs(urls, default_tiler_ops, handle_as, 
             default_ops_load_layer, debug_mode, time_analysis)
         if return_url != None:
-            self._argv = ["loadLayerConfig", return_url, handle_as, default_ops_load_layer]
+            self._argv = ["loadLayerConfig", return_url, handle_as_varjson, default_ops_load_layer_varjson]
         
     def set_date(self, date_str, format_str=""):
         self._argv = ["setDate", date_str, format_str]

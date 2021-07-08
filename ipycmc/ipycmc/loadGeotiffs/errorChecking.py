@@ -2,7 +2,6 @@ import json
 from . import loadGeotiffs
 from . import extractInfoLinks
 import requests
-from varname import nameof
 
 global required_info
 
@@ -17,12 +16,11 @@ def check_valid_arguments(urls, default_tiler_ops, handle_as, default_ops_load_l
     return urls_valid and args_valid
 
 def check_correct_classes_args(default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
-    return check_correct_class_arg(default_tiler_ops, dict) and check_correct_class_arg(handle_as, str) and check_correct_class_arg(default_ops_load_layer, dict)
-    and check_correct_class_arg(debug_mode, bool) and check_correct_class_arg(time_analysis, bool)
+    return check_correct_class_arg(default_tiler_ops, "default_tiler_ops", dict) and check_correct_class_arg(handle_as, "handle_as", str) and check_correct_class_arg(default_ops_load_layer, "default_ops_load_layer", dict) and check_correct_class_arg(debug_mode, "debug_mode", bool) and check_correct_class_arg(time_analysis, "time_analysis", bool)
 
-def check_correct_class_arg(arg, class_type):
+def check_correct_class_arg(arg, arg_name, class_type):
     if not isinstance(arg, class_type):
-        print(nameof(arg) + " should be a " + str(class_type))
+        print(arg_name + " should be a " + str(class_type))
         return False
     return True
 
