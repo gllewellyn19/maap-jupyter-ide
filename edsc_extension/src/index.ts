@@ -249,7 +249,7 @@ function activate(app: JupyterFrontEnd,
 
   const paste_granule_query_command = 'search:pasteGranuleQuery';
   app.commands.addCommand(paste_granule_query_command, {
-    label: 'Paste Granule Search Query',
+    label: 'Paste Granule Search Query ADDED',
     isEnabled: () => true,
     execute: args => {
       pasteSearch(args, "query", "granule")
