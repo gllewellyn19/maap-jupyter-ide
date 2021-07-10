@@ -199,6 +199,29 @@ function activate(app: JupyterFrontEnd,
 
   }
 
+  function testing() {
+    var getUrl = new URL(PageConfig.getBaseUrl() + 'edsc/visualizeCMC');
+    //getUrl.searchParams.append("cmr_query", globals.granuleQuery);
+    //getUrl.searchParams.append("limit", globals.limit);
+
+    // Make call to back end
+    var xhr = new XMLHttpRequest();
+    //let url_response:any = [];
+
+    xhr.onload = function() {
+      console.log("worked1");
+      INotification.error("worked2");
+      alert("worked3")
+    };
+
+    xhr.onerror = function() {
+        console.log("Error making call to get results");
+      };
+
+    xhr.open("GET", getUrl.href, true);
+    xhr.send(null);
+  }
+
 
   /******** Set commands for command palette and main menu *********/
 
@@ -249,7 +272,7 @@ function activate(app: JupyterFrontEnd,
 
   const paste_granule_query_command = 'search:pasteGranuleQuery';
   app.commands.addCommand(paste_granule_query_command, {
-    label: 'Paste Granule Search Query ADDED',
+    label: 'Paste Granule Search Query',
     isEnabled: () => true,
     execute: args => {
       pasteSearch(args, "query", "granule")
@@ -277,6 +300,52 @@ function activate(app: JupyterFrontEnd,
   });
   palette.addItem({command: set_limit_command, category: 'Search'});
 
+  const visualize_cmc_command = 'search:visualizeCMC';
+  app.commands.addCommand(visualize_cmc_command, {
+    label: 'Visualize Granule Results CMC',
+    isEnabled: () => true,
+    execute: args => {
+      testing()
+    }
+  });
+  palette.addItem({command: visualize_cmc_command, category: 'Search'});
+      //visualize_CMC();
+      /*const spawn = require("child_process").spawn;
+      //const { spawn } = require('child_process');
+      const pythonProcess = spawn('python',["visualizeCMC.py"]);
+      pythonProcess.stdout.on('data', (data) => {
+        // Do something with the data returned from python script
+        alert("worked");
+      });*/
+      /*var jqXHR = $.ajax({
+        type: "POST",
+        url: "~/visualizeCMC.py",
+        data: { param: Text}
+      }).done(function() {
+        alert( "success" );
+      })
+      .fail(function() {
+        alert( "error" );
+      })
+      .always(function() {
+        alert( "complete" );
+      });
+      var jqXHR = $.ajax( "./visualizeCMC.py" )
+        .done(function() {
+          alert( "success" );
+        })
+        .fail(function() {
+          alert( "error" );
+        })
+        .always(function() {
+          alert( "complete" );
+        });
+        jqXHR.fail(function( jqXHR, textStatus, errorThrown ) {
+          alert(textStatus);
+          alert(errorThrown);
+        });*/
+  
+
 
 
   const { commands } = app;
@@ -288,7 +357,8 @@ function activate(app: JupyterFrontEnd,
     paste_collection_query_command,
     paste_granule_query_command,
     paste_results_command,
-    set_limit_command
+    set_limit_command,
+    visualize_cmc_command
   ].forEach(command => {
     searchMenu.addItem({ command });
   });
