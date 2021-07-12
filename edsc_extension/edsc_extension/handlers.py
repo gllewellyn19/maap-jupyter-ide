@@ -8,8 +8,6 @@ import json
 import maap
 from maap.maap import MAAP
 
-from . import visualizeCMC
-
 @functools.lru_cache(maxsize=128)
 def get_maap_config(host):
     path_to_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..', 'maap_environments.json')
@@ -67,13 +65,13 @@ class GetQueryHandler(IPythonHandler):
 class VisualizeCMCHandler(IPythonHandler):
     def get(self):
         print("worked in python function")
-        visualizeCMC.visualize_CMC()
         maap = MAAP(maap_api(self.request.host))
         cmr_query = self.get_argument('cmr_query', '')
         limit = str(self.get_argument('limit', ''))
         print("cmr_query", cmr_query)
 
         query_string = maap.getCallFromCmrUri(cmr_query, limit=limit)
+        query_string = "maap.searchGranule(limit=5)"
         granules = eval(query_string)
 
         # get list of granules to pass to load geotiffs 
@@ -82,6 +80,25 @@ class VisualizeCMCHandler(IPythonHandler):
             if res.getDownloadUrl():
                 urls.append(res.getDownloadUrl())
 
+        
         # TODO figure out how to pass urls to load_geotiffs and filter out things that do not end in .tiff
+        print("urls are " +str(urls))
+        urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
 
 
+        function_call = create_function_call(urls)
+        self.finish({"function_call": function_call})
+
+
+def create_function_call(urls):
+    # Filter out all urls that do not have the correct ending type
+    newUrls = ""
+
+
+    function_call = "w.load_geotiffs(urls="
+    if len(newUrls) == 0:
+        return "No urls were found and had valid ending types (i.e. one of " + "" + ")."
+    elif len(newUrls) == 1:
+        function_call = "\"" + newUrls + "\""
+
+    return function_call + ")"

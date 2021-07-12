@@ -103,11 +103,12 @@ function activate(app: JupyterFrontEnd,
   function pasteSearch(args: any, result_type: any, query_type='granule') {
     const current = getCurrent(args);
 
+    // TODO Comment this back in
     // If no search is selected, send an error
-    if (Object.keys(globals.granuleParams).length == 0) {
-        INotification.error("Error: No Search Selected.");
-        return;
-    }
+    //if (Object.keys(globals.granuleParams).length == 0) {
+    //    INotification.error("Error: No Search Selected.");
+    //    return;
+    //}
 
     // Paste Search Query
     if (result_type == "query") {
@@ -199,24 +200,39 @@ function activate(app: JupyterFrontEnd,
 
   }
 
-  function testing() {
+  function visualizeCMC(args: any) {
+    const current = getCurrent(args);
+    // If no search is selected, send an error
+    // TODO check for if empty without causing error
+    //if (Object.keys(globals.granuleParams).length == 0) {
+    //  INotification.error("Error: No Search Selected.");
+    //  return;
+    //}
     var getUrl = new URL(PageConfig.getBaseUrl() + 'edsc/visualizeCMC');
-    //getUrl.searchParams.append("cmr_query", globals.granuleQuery);
-    //getUrl.searchParams.append("limit", globals.limit);
 
     // Make call to back end
     var xhr = new XMLHttpRequest();
-    //let url_response:any = [];
 
     xhr.onload = function() {
-      console.log("worked1");
-      INotification.error("worked2");
-      alert("worked3")
+        if (xhr.status == 200) {
+            let response: any = JSON.parse(xhr.response);
+            if (current) {
+                NotebookActions.insertBelow(current.content);
+                NotebookActions.paste(current.content);
+                current.content.mode = 'edit';
+                const insert_text = "# Results posted to CMC (unaccepted file types removed): " + "\n" + response.function_call;
+                current.content.activeCell.model.value.text = insert_text;
+            }
+        }
+        else {
+            console.log("Error making call to get results. Status is " + xhr.status);
+            INotification.error("Error making call to get search results. Have you selected valid search parameters?");
+        }
     };
 
     xhr.onerror = function() {
-        console.log("Error making call to get results");
-      };
+      INotification.error("Getting results from Data Search.");
+    };
 
     xhr.open("GET", getUrl.href, true);
     xhr.send(null);
@@ -305,7 +321,7 @@ function activate(app: JupyterFrontEnd,
     label: 'Visualize Granule Results CMC',
     isEnabled: () => true,
     execute: args => {
-      testing()
+      visualizeCMC(args)
     }
   });
   palette.addItem({command: visualize_cmc_command, category: 'Search'});

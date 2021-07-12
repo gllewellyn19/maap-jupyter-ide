@@ -80,6 +80,6 @@ class MapCMC(DOMWidget, InteractMixin):
             return list(filter(lambda layer_id: l[layer_id]["isActive"], l))
         return []
 
-# DELETE THIS
+# TODO DELETE THIS
 def testing():
     print("in widget.py")
