@@ -103,12 +103,11 @@ function activate(app: JupyterFrontEnd,
   function pasteSearch(args: any, result_type: any, query_type='granule') {
     const current = getCurrent(args);
 
-    // TODO Comment this back in
     // If no search is selected, send an error
-    //if (Object.keys(globals.granuleParams).length == 0) {
-    //    INotification.error("Error: No Search Selected.");
-    //    return;
-    //}
+    if (Object.keys(globals.granuleParams).length == 0) {
+        INotification.error("Error: No Search Selected.");
+        return;
+    }
 
     // Paste Search Query
     if (result_type == "query") {
