@@ -34,14 +34,27 @@ def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
             "Content-Type": "application/vnd.titiler.mosaicjson+json",
         },
         json=mosaic_data_json).json()
-        
-    try:
-        xml_endpoint = eval(required_info.getting_wmts_endpoint)
-    except:
-        print("getting_wmts_endpoint variable unable to be evaluated from variables.json or error in request url "+r)
-        return None
+    print(r)
+    # NOTE this should be temporary    
+    bucket_name = errorChecking.determine_valid_bucket(urls[0])
+    # If the data is published or in pilot ops
+    if (bucket_name == None or bucket_name=="maap-ops-dataset"):
+        try:
+            xml_endpoint = eval(required_info.getting_wmts_endpoint)
+        except:
+            print("getting_wmts_endpoint variable unable to be evaluated from variables.json or error in request url "+r)
+            return None
 
-    return add_defaults_url(xml_endpoint + "?", default_tiler_ops, debug_mode)
+        return add_defaults_url(xml_endpoint + "?", default_tiler_ops, debug_mode)
+    elif bucket_name=="maap-ops-workspace":
+        tilejson_endpoint = list(filter(lambda x: x.get('rel') == 'mosaicjson', dict(r)['links']))[0].get('href')
+        newUrl = required_info.endpoints_tiler.get(bucket_name) + required_info.tiler_extensions.get("multiple") + "url=" + tilejson_endpoint
+        newUrl = add_defaults_url(newUrl, default_tiler_ops, debug_mode)
+        if newUrl == None or (debug_mode and errorChecking.check_errors_request_url(newUrl)):
+            return None
+        return newUrl
+    else:
+        return None
 
 # Creates a variable representing a mosaic JSON to pass to the Tiler
 def create_mosaic_json(urls):
@@ -97,7 +110,7 @@ def add_defaults_url(url, default_tiler_ops, debug_mode):
     temp_defaults_tiler = copy.copy(required_info.defaults_tiler)
     # If given no default_tiler_ops, this for loop will not run and all the rest of the default values will just be added
     for key in default_tiler_ops:
-        defaultValues = defaultValues + "&" + key + "=" + default_tiler_ops[key]
+        defaultValues = defaultValues + "&" + key + "=" + str(default_tiler_ops[key])
         if key in temp_defaults_tiler:
             temp_defaults_tiler.pop(key, None)
             
