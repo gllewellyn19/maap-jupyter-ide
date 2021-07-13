@@ -28,8 +28,9 @@ def extract_geotiff_links(folder_path, debug_mode):
             if obj.size and file_ending(obj.key) and obj.key[len(file_path)+1:].find("/") == -1: 
                 # If looking in s3 bucket, then can hard code in s3:// because that must be the beginning
                 geotiff_links.append("s3://" + bucket_name + "/" + obj.key)
+    except KeyboardInterrupt:
+        raise KeyboardInterrupt
     except:
-        print(sys.exc_info())
         print("Error reading file contents from bucket. This is likely a permissions error.")
         return None
     if debug_mode:

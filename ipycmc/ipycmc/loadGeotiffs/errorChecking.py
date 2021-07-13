@@ -125,6 +125,8 @@ def check_valid_default_arguments(default_tiler_ops):
                 print("The argument you are passing for " + key + " is not a valid class for this key. The class " + str(required_info.required_class_types_args_tiler[key]) + 
                 " is accepted, but you passed " + str(type(default_tiler_ops[key])) + ".")
                 return False
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             print("JSON file variable required_class_types_args_tiler is formatted incorrectly because " + required_info.required_class_types_args_tiler[key] + " is not a valid class type.")
             return False 

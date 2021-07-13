@@ -17,6 +17,8 @@ class RequiredInfoClass:
         try:
             f = open(os.path.abspath(__file__).replace("edsc_extension/edsc_extension/"+os.path.basename(__file__), path_variablesjson), "r")
             dictionary = json.loads(f.read())
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             print("JSON file with variable information could not be found.")
             self.setup_successful = False
@@ -47,7 +49,8 @@ class RequiredInfoClass:
             self.default_ops_load_layer_config = dictionary["default_ops_load_layer_config"]
             self.default_debug_mode = dictionary["default_debug_mode"]
             self.default_time_analysis = dictionary["default_time_analysis"]
-
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             print("Essential key missing from JSON file: " + str(sys.exc_info()[1]))
             self.setup_successful = False

@@ -41,6 +41,8 @@ def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
     if (bucket_name == None or bucket_name=="maap-ops-dataset"):
         try:
             xml_endpoint = eval(required_info.getting_wmts_endpoint)
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
         except:
             print("getting_wmts_endpoint variable unable to be evaluated from variables.json or error in request url "+r)
             return None
@@ -82,6 +84,8 @@ def worker(meta):
     try:
         with COGReader(meta["path"]) as cog:
             wgs_bounds = cog.bounds
+    except KeyboardInterrupt:
+        raise KeyboardInterrupt
     except:
         return {}
     return {

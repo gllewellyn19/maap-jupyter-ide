@@ -1,5 +1,5 @@
-{"required_starts":"", 
-    "required_ends":"hello",
+{"required_starts":["s3://", "S3://"], 
+    "required_ends":[".tif", ".TIF", ".tiff", ".TIFF"],
     "defaults_tiler":{"tile_format":"png", "tile_scale":1, "pixel_selection":"first", "TileMatrixSetId":"WebMercatorQuad", "resampling_method":"nearest", "return_mask":true, "rescale":"0%2C1000"},
     "endpoints_tiler":{"maap-ops-workspace":"https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com", "maap-ops-dataset":"https://h9su0upami.execute-api.us-east-1.amazonaws.com"},
     "tiler_extensions":{"single":"/cog/WMTSCapabilities.xml?","multiple":"/mosaicjson/WMTSCapabilities.xml?"},
