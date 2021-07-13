@@ -85,7 +85,8 @@ class VisualizeCMCHandler(IPythonHandler):
         
         # TODO figure out how to pass urls to load_geotiffs and filter out things that do not end in .tiff
         print("urls are " +str(urls))
-        urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
+        #urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
+        urls = ["https://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1", "s3://maap-ops-workspace/orange-business/N45W102.SRTMGL1.tif"]
 
         function_call = loadGeotiffsFcnCall.create_function_call(urls)
         self.finish({"function_call": function_call})

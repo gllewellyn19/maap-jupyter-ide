@@ -29,16 +29,37 @@ def import_variablesjson():
 def filter_out_invalid_urls(urls):
     newUrls = []
     for url in urls:
-        for valid_ending in required_info.required_ends:
-            if url[len(valid_ending)*-1:] == valid_ending:
-                newUrls.append(url)
-                break
+        if check_valid_ending(url) and check_valid_start(url) and check_not_esa_data(url):
+            newUrls.append(url)
+
     print(str(newUrls) + " after error check for ending")
     return newUrls
 
+def check_valid_ending(url):
+    for valid_ending in required_info.required_ends:
+        if url[len(valid_ending)*-1:] == valid_ending:
+            return True
+    print(url + " excluded because doesn't end with one of " + (', '.join([str(elem) for elem in required_info.required_ends])) + ".")
+    return False
+
+def check_valid_start(url):
+    for valid_start in required_info.required_starts:
+        if url[:len(valid_start)] == valid_start:
+            return True
+    print(url + " excluded because doesn't end with one of " + (', '.join([str(elem) for elem in required_info.required_starts])) + ".")
+    return False
+
+def check_not_esa_data(url):
+    if "orange-business" in url:
+        print("Access not permitted to " + url + " because it is data from ESA.")
+        return False
+    return True
+
 def add_urls(function_call, newUrls):
     if len(newUrls) == 0:
-        function_call = "No urls were found and had valid ending types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_ends])) + ")."
+        function_call = "# No urls were found that had valid ending types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_ends]))
+        function_call = function_call +") and valid starting types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_starts]))
+        function_call = function_call + ") and didnt' contain orange-business (ESA data)."
         return function_call, False
     elif len(newUrls) == 1:
         function_call = function_call + "\"" + newUrls + "\""

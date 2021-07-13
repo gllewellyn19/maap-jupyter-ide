@@ -218,6 +218,7 @@ function activate(app: JupyterFrontEnd,
             if (current) {
                 NotebookActions.insertBelow(current.content);
                 NotebookActions.paste(current.content);
+                NotebookActions.showAllCode(current.content);
                 current.content.mode = 'edit';
                 const insert_text = "# Results posted to CMC (unaccepted file types removed): " + "\n" + response.function_call;
                 current.content.activeCell.model.value.text = insert_text;
