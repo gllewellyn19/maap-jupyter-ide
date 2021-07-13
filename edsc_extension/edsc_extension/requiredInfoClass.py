@@ -15,7 +15,6 @@ path_variablesjson = "ipycmc/ipycmc/loadGeotiffs/variables.json"
 class RequiredInfoClass:
     def __init__(self, debug_mode):
         try:
-            print(os.path.abspath(__file__).replace("edsc_extension/edsc_extension/"+os.path.basename(__file__), path_variablesjson))
             f = open(os.path.abspath(__file__).replace("edsc_extension/edsc_extension/"+os.path.basename(__file__), path_variablesjson), "r")
             dictionary = json.loads(f.read())
         except:
@@ -58,17 +57,16 @@ class RequiredInfoClass:
         if debug_mode:
             self.check_non_empty_all()
             self.other_error_checking([self.posting_tiler_endpoint, self.endpoint_published_data] + list(self.endpoints_tiler.values()))
+            self.check_correct_types_args()
         
     # Note that not all variables are required to be non empty
     # Print all variables that are empty that need to be filled at once for the user
     def check_non_empty_all(self):
-        to_return = True
         variables = vars(self)
         for key in variables:
             if not variables[key] and variables[key]!=False:
                 print("Cannot pass an empty value for " + key + " in variables.json file.")
-                to_return = False
-        return to_return
+                self.setup_successful = False
     
     def other_error_checking(self, links):
         for link in links:
@@ -80,3 +78,34 @@ class RequiredInfoClass:
             if not start_found:
                 print(link + " in variables.json must start with one of " + (', '.join([str(web_start) for web_start in self.web_starts])) + " to be considered a link.")
                 self.setup_successful = False
+
+# Prints all incorrect arguments if something went wrong
+    # Not the prettiest but short circuiting hurts in this case if all in one statement because not everything will evaluate
+    def check_correct_types_args(self):
+        return1 = self.check_correct_class_arg(self.required_starts, "required_starts", list) 
+        return2 = self.check_correct_class_arg(self.required_ends, "required_ends", list)
+        return3 = self.check_correct_class_arg(self.tiler_extensions, "tiler_extensions", dict) 
+        return4 = self.check_correct_class_arg(self.endpoint_published_data, "endpoint_published_data", str)
+        return5 = self.check_correct_class_arg(self.posting_tiler_endpoint, "posting_tiler_endpoint", str)
+        return6 = self.check_correct_class_arg(self.errors_tiler, "errors_tiler", dict)
+        return7 = self.check_correct_class_arg(self.accepted_parameters_tiler, "accepted_parameters_tiler", list)
+        return8 = self.check_correct_class_arg(self.general_error_warning_tiler, "general_error_warning_tiler", str)
+        return9 = self.check_correct_class_arg(self.required_class_types_args_tiler, "required_class_types_args_tiler", dict) 
+        return10 = self.check_correct_class_arg(self.correct_wmts_beginning, "correct_wmts_beginning", str)
+        return11 = self.check_correct_class_arg(self.accepted_arguments_default_ops.get("tile_format_args"), "tile_format_args", list)
+        return12 = self.check_correct_class_arg(self.accepted_arguments_default_ops.get("pixel_selection_args"), "pixel_selection_args", list)
+        return13 = self.check_correct_class_arg(self.getting_wmts_endpoint, "getting_wmts_endpoint", str) 
+        return14 = self.check_correct_class_arg(self.web_starts, "web_starts", list)
+        return15 = self.check_correct_class_arg(self.default_handle_as, "default_handle_as", str)
+        return16 = self.check_correct_class_arg(self.default_ops_load_layer_config, "default_ops_load_layer_config", dict)
+        return17 = self.check_correct_class_arg(self.default_debug_mode, "default_debug_mode", bool)
+        return18 = self.check_correct_class_arg(self.default_time_analysis, "default_time_analysis", bool)
+        successful = return1 and return2 and return3 and return4 and return5 and return6 and return7 and return8 and return9 and return10 and return11 and return12 and return13 and return14 and return15 and return16 and return17 and return18
+        if not successful:
+            self.setup_successful = False
+
+    def check_correct_class_arg(self, arg, arg_name, class_type):
+        if arg and not isinstance(arg, class_type):
+            print(arg_name + " should be a " + str(class_type) + " in variables.json")
+            return False
+        return True

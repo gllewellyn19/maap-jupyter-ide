@@ -7,6 +7,8 @@ def create_function_call(urls):
     # Filter out all urls that do not have the correct ending type
     global required_info
     required_info = import_variablesjson()
+    if not required_info.setup_successful:
+        return "# Error evaluating variables.json"
     newUrls = filter_out_invalid_urls(urls)
 
     # Add urls
