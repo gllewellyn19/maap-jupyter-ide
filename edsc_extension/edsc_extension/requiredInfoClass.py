@@ -44,8 +44,10 @@ class RequiredInfoClass:
                                  "pixel_selection_args":dictionary["pixel_selection_args"]}
             self.getting_wmts_endpoint = dictionary["getting_wmts_endpoint"]
             self.web_starts = dictionary["web_starts"]
-            self.handle_as = dictionary["default_handle_as"]
+            self.default_handle_as = dictionary["default_handle_as"]
             self.default_ops_load_layer_config = dictionary["default_ops_load_layer_config"]
+            self.default_debug_mode = dictionary["default_debug_mode"]
+            self.default_time_analysis = dictionary["default_time_analysis"]
 
         except:
             print("Essential key missing from JSON file: " + str(sys.exc_info()[1]))

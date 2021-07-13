@@ -70,7 +70,7 @@ def load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_laye
     # Execute the functions for a list of GeoTIFF to make a mosaic JSON
     if isinstance(urls, list):
         request_url = create_request_multiple_geotiffs(urls, default_tiler_ops, debug_mode)
-    return request_url, required_info.handle_as, required_info.default_ops_load_layer_config
+    return request_url, required_info.default_handle_as, required_info.default_ops_load_layer_config
 
 def create_request_single_geotiff(s3Url, default_tiler_ops, debug_mode):
     """Creates the request url in the case of a single s3 geotiff link being passed

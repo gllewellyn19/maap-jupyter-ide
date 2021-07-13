@@ -15,5 +15,7 @@
     "getting_wmts_endpoint":"list(filter(lambda x: x.get('rel') == 'wmts', dict(r)['links']))[0].get('href')",
     "web_starts":["https://", "http://"],
     "default_handle_as": "wmts/xml",
-    "default_ops_load_layer_config": {"handleAs": "wmts_raster"}
+    "default_ops_load_layer_config": {"handleAs": "wmts_raster"},
+    "default_debug_mode":"True",
+    "default_time_analysis":"False"
    }

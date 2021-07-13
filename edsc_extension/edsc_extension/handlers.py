@@ -8,7 +8,7 @@ import json
 import maap
 from maap.maap import MAAP
 
-from . import requiredInfoClass
+from . import loadGeotiffsFcnCall
 
 @functools.lru_cache(maxsize=128)
 def get_maap_config(host):
@@ -87,33 +87,8 @@ class VisualizeCMCHandler(IPythonHandler):
         print("urls are " +str(urls))
         urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
 
-        function_call = create_function_call(urls)
+        function_call = loadGeotiffsFcnCall.create_function_call(urls)
         print(function_call)
         self.finish({"function_call": function_call})
 
 
-def create_function_call(urls):
-    # Filter out all urls that do not have the correct ending type
-    newUrls = []
-    required_info = import_variablesjson()
-    for url in urls:
-        for valid_ending in required_info.required_ends:
-            if url[len(valid_ending)*-1:] == valid_ending:
-                newUrls.append(url)
-                break
-    print(str(newUrls) + " after error check for ending")
-
-    function_call = "w.load_geotiffs(urls="
-    if len(newUrls) == 0:
-        return "No urls were found and had valid ending types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_ends])) + ")."
-    elif len(newUrls) == 1:
-        function_call = function_call + "\"" + newUrls + "\""
-    elif len(newUrls) > 1:
-        function_call = function_call + str(newUrls)
-
-    return function_call + ")"
-
-def import_variablesjson():
-    # TODO fix this to call the right required info
-    required_info = requiredInfoClass.RequiredInfoClass(True)
-    return required_info
