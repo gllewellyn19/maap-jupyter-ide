@@ -23,6 +23,8 @@ def initialize_required_info(required_info_given):
 def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
     # TODO error check in this function and potentially return None, remember to get None in loadGeotiffs
     mosaic_data_json = create_mosaic_json(urls)
+    if mosaic_data_json == None:
+        return None
     posting_endpoint = required_info.posting_tiler_endpoint
     
     # Post the mosaic json
@@ -52,7 +54,9 @@ def create_mosaic_json(urls):
 
     with futures.ThreadPoolExecutor(max_workers=5) as executor:
         features = [r for r in executor.map(worker, files) if r]
-    
+    if features == []:
+        print("Features created is empty which is most likely a permissions error.")
+        return None
     mosaic_data = MosaicJSON.from_features(features, minzoom=10, maxzoom=18).json()
     return json.loads(mosaic_data)
     

@@ -88,7 +88,6 @@ class VisualizeCMCHandler(IPythonHandler):
         urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
 
         function_call = loadGeotiffsFcnCall.create_function_call(urls)
-        print(function_call)
         self.finish({"function_call": function_call})
 
 

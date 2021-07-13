@@ -64,7 +64,7 @@ class RequiredInfoClass:
         to_return = True
         variables = vars(self)
         for key in variables:
-            if not variables[key]:
+            if not variables[key] and variables[key]!=False:
                 print("Cannot pass an empty value for " + key + " in variables.json file.")
                 to_return = False
         return to_return

@@ -21,22 +21,22 @@ json_file_name = "variables.json"
 global required_info
 
 def load_geotiffs(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
-    try:
-        if time_analysis:
-            return_url,handle_as_varjson,default_ops_load_layer_varjson = timeAnalysis.conduct_time_analysis(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
-        else:    
-            return_url,handle_as_varjson,default_ops_load_layer_varjson = load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
-        print("Request url generated: " + str(return_url))
-        if return_url != None:
-            if not handle_as:
-                handle_as = handle_as_varjson
-            if not default_ops_load_layer:
-                default_ops_load_layer = default_ops_load_layer_varjson
-        return return_url,handle_as,default_ops_load_layer
-    except:
-        print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
-        print("Error message: " + str(sys.exc_info()))
-        return None,None,None
+    #try:
+    if time_analysis:
+        return_url,handle_as_varjson,default_ops_load_layer_varjson = timeAnalysis.conduct_time_analysis(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
+    else:    
+        return_url,handle_as_varjson,default_ops_load_layer_varjson = load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis)
+    print("Request url generated: " + str(return_url))
+    if return_url != None:
+        if not handle_as:
+            handle_as = handle_as_varjson
+        if not default_ops_load_layer:
+            default_ops_load_layer = default_ops_load_layer_varjson
+    return return_url,handle_as,default_ops_load_layer
+    #except:
+    #    print("Your function call failed for an unknown reason. Please set debugging to True to get more information.")
+    #    print("Error message: " + str(sys.exc_info()))
+    #    return None,None,None
 
 def load_geotiffs_base(urls, default_tiler_ops, handle_as, default_ops_load_layer, debug_mode, time_analysis):
     """Main function that handles the users request

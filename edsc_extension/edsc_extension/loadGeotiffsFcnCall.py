@@ -14,8 +14,8 @@ def create_function_call(urls):
     if not valid:
         return function_call
     function_call = function_call + ", default_tiler_ops="+ str(required_info.defaults_tiler) + ", handle_as=\""
-    +required_info.default_handle_as+"\", default_ops_load_layer="+str(required_info.default_ops_load_layer_config)
-    +", debug_mode="+required_info.default_debug_mode+", time_analysis="+required_info.default_time_analysis
+    function_call = function_call+required_info.default_handle_as+"\", default_ops_load_layer="+str(required_info.default_ops_load_layer_config)
+    function_call = function_call+", debug_mode="+str(required_info.default_debug_mode)+", time_analysis="+str(required_info.default_time_analysis)
 
     return function_call + ")"
 
