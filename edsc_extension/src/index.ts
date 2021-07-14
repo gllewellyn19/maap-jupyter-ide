@@ -264,7 +264,7 @@ function activate(app: JupyterFrontEnd,
       if (maapVarNameBelow != null) {
         getUrl.searchParams.append("maapVarName", maapVarNameBelow);
       } else {
-        //TODO: in this case you need to run the cell that creates the maap yourself
+        // if instance of maap cannot be found, paste it into a cell yourself
         getUrl.searchParams.append("maapVarName", "w");
         var cellContent = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\nw"
         NotebookActions.insertBelow(current.content);
@@ -275,7 +275,6 @@ function activate(app: JupyterFrontEnd,
       }
     }
 
-    
     getUrl.searchParams.append("cmr_query", globals.granuleQuery);
     getUrl.searchParams.append("limit", globals.limit);
     // Make call to back end
@@ -291,6 +290,11 @@ function activate(app: JupyterFrontEnd,
               const insert_text = "# Results to post to CMC (unaccepted file types removed): " + "\n" + response.function_call;
               current.content.activeCell.model.value.text = insert_text;
 
+              // Print error messages
+              var errors = response.errors.split("|");
+              for (let error of errors) {
+                INotification.warning(error);
+              }
             }
         }
         else {
@@ -300,7 +304,7 @@ function activate(app: JupyterFrontEnd,
     };
 
     xhr.onerror = function() {
-      INotification.error("Getting results from Data Search.");
+      INotification.error("Error getting results from Data Search.");
     };
 
     xhr.open("GET", getUrl.href, true);
