@@ -34,8 +34,7 @@ def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
             "Content-Type": "application/vnd.titiler.mosaicjson+json",
         },
         json=mosaic_data_json).json()
-    print(r)
-    # NOTE this should be temporary    
+    # NOTE this should be temporary because Dev seed should get back with an all in one endpoint
     bucket_name = errorChecking.determine_valid_bucket(urls[0])
     # If the data is published or in pilot ops
     if (bucket_name == None or bucket_name=="maap-ops-dataset"):

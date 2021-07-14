@@ -98,6 +98,54 @@ function activate(app: JupyterFrontEnd,
     return widget;
   }
 
+  function getMaapVarName(current, checkAbove) {
+     // If same content 3 times in a row, assume that you have reached the top (reaching the top is a top op)
+     var iterationsUp = 0;
+     var nameMaapVar = null; // default variable
+     var lastCellCode = "";
+     var cellCodesRepeatedLastIteration = false;
+     while(true) {
+       if (checkAbove) {
+         NotebookActions.selectAbove(current.content);
+       } else {
+        NotebookActions.selectBelow(current.content);
+       }
+       iterationsUp ++;
+       var cellCode = current.content.activeCell.model.value.text;
+       var index = cellCode.indexOf(".MapCMC()");
+       if (index!=-1) {
+         cellCode = cellCode.substring(0, index);
+         nameMaapVar = cellCode.substring(cellCode.lastIndexOf("="), cellCode.lastIndexOf("\n")).trim();
+         break;
+       }
+       // Check to see if repeating
+       if (cellCode == lastCellCode) {
+         // Break because this means they have repeated 3 times in a row now, the var name will just default to w
+         if (cellCodesRepeatedLastIteration) {
+          iterationsUp -=2;
+           break;
+         } else {
+           cellCodesRepeatedLastIteration = true;
+         }
+       } else {
+         cellCodesRepeatedLastIteration = false;
+       }
+       lastCellCode = cellCode;
+     }
+
+     var count = 0;
+     while(count < iterationsUp) {
+        if (checkAbove) {
+          NotebookActions.selectBelow(current.content);
+        } else {
+        NotebookActions.selectAbove(current.content);
+        }
+        count++;
+     }
+
+     return nameMaapVar;
+  }
+
 
   // PASTE SEARCH INTO A NOTEBOOK
   function pasteSearch(args: any, result_type: any, query_type='granule') {
@@ -208,23 +256,41 @@ function activate(app: JupyterFrontEnd,
     //  return;
     //}
     var getUrl = new URL(PageConfig.getBaseUrl() + 'edsc/visualizeCMC');
+    var maapVarNameAbove = getMaapVarName(current, true);
+    if (maapVarNameAbove != null) {
+      getUrl.searchParams.append("maapVarName", maapVarNameAbove);
+    } else {
+      var maapVarNameBelow = getMaapVarName(current, false);
+      if (maapVarNameBelow != null) {
+        getUrl.searchParams.append("maapVarName", maapVarNameBelow);
+      } else {
+        //TODO: in this case you need to run the cell that creates the maap yourself
+        getUrl.searchParams.append("maapVarName", "w");
+        var cellContent = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\nw"
+        NotebookActions.insertBelow(current.content);
+        NotebookActions.paste(current.content);
+        current.content.mode = 'edit';
+        current.content.activeCell.model.value.text = cellContent;
+        NotebookActions.run(current.content);
+      }
+    }
 
+    
+    getUrl.searchParams.append("cmr_query", globals.granuleQuery);
+    getUrl.searchParams.append("limit", globals.limit);
     // Make call to back end
     var xhr = new XMLHttpRequest();
-
+    
     xhr.onload = function() {
         if (xhr.status == 200) {
             let response: any = JSON.parse(xhr.response);
             if (current) {
-                NotebookActions.insertBelow(current.content);
-                NotebookActions.paste(current.content);
-                current.content.mode = 'edit';
-                const insert_text = "# Results posted to CMC (unaccepted file types removed): " + "\n" + response.function_call;
-                current.content.activeCell.model.value.text = insert_text;
+              NotebookActions.insertBelow(current.content);
+              NotebookActions.paste(current.content);
+              current.content.mode = 'edit';
+              const insert_text = "# Results to post to CMC (unaccepted file types removed): " + "\n" + response.function_call;
+              current.content.activeCell.model.value.text = insert_text;
 
-                NotebookActions.selectAll(current.content);
-                INotification.success(current.content.activeCell.model.value.text);
-                
             }
         }
         else {

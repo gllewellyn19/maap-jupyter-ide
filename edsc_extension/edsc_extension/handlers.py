@@ -70,8 +70,10 @@ class VisualizeCMCHandler(IPythonHandler):
         maap = MAAP(maap_api(self.request.host))
         cmr_query = self.get_argument('cmr_query', '')
         limit = str(self.get_argument('limit', ''))
+        maap_var_name = self.get_argument('maapVarName', '')
         print("cmr_query", cmr_query)
 
+        # TODO fix this line 
         query_string = maap.getCallFromCmrUri(cmr_query, limit=limit)
         query_string = "maap.searchGranule(limit=5)"
         granules = eval(query_string)
@@ -82,13 +84,10 @@ class VisualizeCMCHandler(IPythonHandler):
             if res.getDownloadUrl():
                 urls.append(res.getDownloadUrl())
 
-        
-        # TODO figure out how to pass urls to load_geotiffs and filter out things that do not end in .tiff
         print("urls are " +str(urls))
-        #urls = ["s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1.tif"]
-        urls = ["https://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif", "s3://maap-ops-workspace/graceal/N45W102.SRTMGL1", "s3://maap-ops-workspace/orange-business/N45W102.SRTMGL1.tif"]
-
-        function_call = loadGeotiffsFcnCall.create_function_call(urls)
+        urls = "s3://maap-ops-workspace/graceal/N45W101.SRTMGL1.tif"
+        
+        function_call = loadGeotiffsFcnCall.create_function_call(urls, maap_var_name)
         self.finish({"function_call": function_call})
 
 
