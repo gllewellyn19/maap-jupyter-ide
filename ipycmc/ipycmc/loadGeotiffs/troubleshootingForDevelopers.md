@@ -25,3 +25,4 @@ const rules = [
 3. If `npm run build` fails with exit status 137, then you may need to increase the RAM of your workspace. 
 4. If `jupyter labextension install @jupyter-widgets/jupyterlab-manager@2.0` fails, then run `jupyter labextension install --minimize=False @jupyter-widgets/jupyterlab-manager@2.0` instead (happens in MAAP ade Pilot ops sometimes)
 5. If you get the error `ValueError: "/projects/maap-jupyter-ide/ipycmc/ipycmc" is not a valid npm package` when running `jupyter labextension install ipycmc` then `cd ..` out of `/ipycmc`
+6. If you get this error message `OSError: No maap.cfg file found. Locations checked: ./maap.cfg; /home/gllewellyn19/maap.cfg; ./maap.cfg`, try running `export MAAP_CONF=/home/maap-py` where `home` is replaces with the file path to `maap-py`. You can find this by running `pwd`. 

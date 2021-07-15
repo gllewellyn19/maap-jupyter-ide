@@ -1,50 +1,57 @@
 # README for load\_geotiff function
 ## Arguments
-MapCMC.load\_geotiffs(urls, default\_ops (Optional), handle\_as (Optional), default\_ops\_load\_layer (Optional)).
-Function call must be on a MapCMC object. 
 Function definition: 
 ```
-w.load_geotiffs(urls, default_tiler_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False)
+load_geotiffs(urls, default_tiler_ops = {}, handle_as = "", default_ops_load_layer = {}, debug_mode = True, time_analysis = False)
 ```
 Function call must be on a MapCMC object. For example, 
 ```
 w = ipycmc.MapCMC()
 w
-w.load_geotiffs(urls="", default_tiler_ops={"colormap_name":"autumn", "pixel_selection":"mean"}, handle_as="wmts/xml", default_ops_load_layer={"handleAs": "wmts_raster"})
+w.load_geotiffs(urls="", default_tiler_ops={"colormap_name":"autumn", "pixel_selection":"mean"}, handle_as="wmts/xml", default_ops_load_layer={"handleAs": "wmts_raster"}, debug_mode = True, time_analysis = False)
 ```
 * `urls`, where urls must be:
 	*  a string consisting of a single link to a geotiff in an s3 bucket in the MAAP ade (private or bucket bucket will suffice). Currently, this string must start with "s3://" and end with ".tif" or ".tiff". However, this can be changed by modifying the `required_start` and `required_end` lists in variables.json. Even if these arguments are changed, if the beginning and ending types of the links do not comply with the TiTiler requirements, an error message will be returned.
     * a list consisting of links to geotiffs where each link follows all the guidlines listed above 
     * a string pointing to a folder in an s3 bucket. All files in this folder will be added to a list as long as they end in one of `required_end`
-* `default_tiler_ops`, Arguments to be passed to the request url to the TiTiler. This variable must be a dictionary where the key is one of the parameters below and the value is the argument to be passed for that parameter. Note that `pixel_selection`, `tile_format`, `TileMatrixSetId`, `resampling_method`, and `colormap_name` can only be certain values that are specified in variables.json. 
-	* `tile_format`
-   * `tile_scale`
-   * `pixel_selection` 
-   * `TileMatrixSetId`
-   * `resampling_method`
-   * `return_mask`
+* `default_tiler_ops`, Arguments to be passed to the request url to the TiTiler. This variable must be a dictionary where the key is one of the parameters below and the value is the argument to be passed for that parameter. Below are the descriptions provided by Development Seed.
+   * `tile_format`: Output image type, `string`. Can only be certain value specified in `variables.json`
+   * `tile_scale`: Tile size scale. 1=256x256, 2=512x512..., `integer`
+   * `pixel_selection`: Pixel selection method, `string`. Can only be certain value specified in `variables.json`. Primarily used for mosaic json (i.e. multiple geotiffs at once)
+   * `TileMatrixSetId`: TileMatrixSet Name (set values that represent a projection), `string`. Can only be certain value specified in `variables.json`
+   * `resampling_method`: Resampling method, `string`. Can only be certain value specified in `variables.json`
+   * `return_mask`: Add mask to the output data, `boolean`
    * `rescale`
    
     __Additional arguments you can add that are not typically added as defaults (Note: you can change the defaults by modifying `defaults_tiler` in variables.json:)__
-   * `minzoom`
-   * `maxzoom`
-   * `bidx` 
-   * `expression` 
-   * `nodata` 
-   * `unscale` 
-   * `color_formula`
-   * `colormap_name` 
-   * `colormap`
+   * `minzoom`:  Overwrite default minzoom, `integer`
+   * `maxzoom`: Overwrite default maxzoom, `integer`
+   * `bidx`: comma (',') delimited band indexes, `string`
+   * `expression`: rio-tiler's band math expression (e.g B1/B2), `string`
+   * `nodata`: 	Overwrite internal Nodata value
+   * `unscale`: Apply internal Scale/Offset, `boolean`
+   * `color_formula`: rio-color formula (info: [https://github.com/mapbox/rio-color](https://github.com/mapbox/rio-color)), `string`
+   * `colormap_name`: Colormap name affecting the colors of the tiles mapped, `string`. Can only be certain value specified in `variables.json`
+   * `colormap`: JSON encoded custom Colormap, `string`
    
    __For more documentation about these arguments, please visit: [https://h9su0upami.execute-api.us-east-1.amazonaws.com/docs#](https://h9su0upami.execute-api.us-east-1.amazonaws.com/docs#)__
    
- * handle\_as
+ * `handle\_as`
     * Default is "wmts/xml", but this can be changed by modifying `default_handle_as` in variables.json 
-  * default\_ops\_load\_layer
+  * `default\_ops\_load\_layer`
   	* Default is `{"handleAs": "wmts_raster"}`, but this can be changed by modifying `default_ops_load_layer` in variables.json
+  * `debug_mode`
+    * Default is `True`. This provides checks and detailed descriptions of the error that occurred as well as potential fixes. If you receive an unknown error please run in debug mode.
+  * `time_analysis`
+  	* Default is `False`. The intent of this parameter is to show the speed of the function and running the function in debug mode or not. This only shows the time to complete load\_geotiffs and not a call to `load_layer_config`. The function call to `load_geotiffs` that is mapped on CMC is the one with the given `debug_mode` or `True` if not provided.
     
 ## Objective of this function
-The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade s3 bucket and create a request url to a TiTiler endpoint (depending on MAAP environment). This request url points to an XML file that represents a WMTS capabilities file for the geotiff. This is passed to load\_layer\_config. A layer is loaded into CMC in a single seamless function call that can handle multiple geotiffs. In order for CMC to correctly display the tile request, certain default arguments need to be added onto this request url. In the case of a single geotiff, this is simple as the s3 link is added to the request url as an argument along with the default arguments. However, in the case of multiple geotiffs, a mosaic JSON must be created. The mosaic JSON is created through the from\_urls or from\_features methods in the cogeo\_mosaic library created by Development seed. The mosaic JSON is then posted to a TiTiler endpoint where a WMTS capabilities link is returned. The default arguments are added to this WMTS capabilities link and then passed to load\_layer\_config as the request url. A user can always change the default arguments as described above. 
+The goal of `load_geotiffs` is to take in the location of a geotiff in a MAAP ade s3 bucket and create a request url to a TiTiler endpoint (depending on MAAP environment). This request url points to an XML file that represents a WMTS capabilities file for the geotiff. This is passed to `load_layer_config`. A layer is loaded into CMC in a single seamless function call that can handle multiple geotiffs. In order for CMC to correctly display the tile request, certain default arguments need to be added onto this request url. In the case of a single geotiff, this is simple as the s3 link is added to the request url as a argument along with the default arguments. However, in the case of multiple geotiffs, a mosaic JSON must be created. The mosaic JSON is created through the `from_urls` or `from_features` methods in the `cogeo_mosaic` library created by Development seed. The mosaic JSON is then posted to a TiTiler endpoint where a WMTS capabilities link is returned. The default arguments are added to this WMTS capabilities link and then passed to `load_layer_config` as the request url. A user can always change the default arguments as described above. 
+
+### Workflow diagram
+![Workflow Diagram](workflowDiagram.png)
+* h9su TiTiler: [https://h9su0upami.execute-api.us-east-1.amazonaws.com](https://h9su0upami.execute-api.us-east-1.amazonaws.com)
+* jqsd TiTiler: [https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com](https://jqsd6bqdsf.execute-api.us-west-2.amazonaws.com)
 
 ## Error checking performed by load\_geotiffs
 ##### Variables.json
@@ -58,7 +65,8 @@ The goal of load\_geotiffs is to take in the location of a geotiff in a MAAP ade
 * If list of urls, each element has the same s3 bucket name
 * One of the keys passed for `default_tiler_ops` is not found as a valid key in `defaults_tiler` or `accepted_arguments_tiler`
 * One of the parameters passed for `default_tiler_ops` is not the correct class type 
-* One of the parameters passed for `default_tiler_ops` is not one of the values accepted for the finite list of accepted arguments (i.e. for the parameters `TileMatrixSetId`, `resampling_method`, `colormap_name`, `tile_format`, and `pixel_selection`)
+* One of the parameters passed for `default_tiler_ops` is not one of the values accepted for the finite list of accepted arguments (i.e. for the parameters. This can be specified in `variables.json`.
+*  `TileMatrixSetId`, `resampling_method`, `colormap_name`, `tile_format`, and `pixel_selection`). This can be specified in `variables.json`.
 
 ##### More advanced argument error checking
 * s3 bucket name of s3 link is not one of `endpoints_tiler.keys()`
@@ -101,7 +109,4 @@ Running not in debug mode is a risk if you do not understand how the function wo
 The only difference setting this parameter to True is that the function call is done twice (once with debug mode and once without) and the results are printed. The request url generated for the given parameters including the given `debug_mode` are sent to load\_layer\_config as the function normally does. This function takes longer to run and the only purpose of it is to show the effects of `debug_mode` so that users can decide if they would like to run in that mode. Note that `time_analysis` is False by default. 
 
 ### Troubleshooting
-Rerun the loadGeotiff function if the map layer does not show up the first time.
-
-### To do
-* Maybe use from urls or from features depending on the file size
+* Rerun the loadGeotiff function if the map layer does not show up the first time.
