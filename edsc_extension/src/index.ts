@@ -293,7 +293,7 @@ function activate(app: JupyterFrontEnd,
               // Print error messages
               var errors = response.errors.split("|");
               for (let error of errors) {
-                INotification.warning(error);
+                INotification.info(error);
               }
             }
         }

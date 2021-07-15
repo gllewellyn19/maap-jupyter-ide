@@ -1,11 +1,11 @@
-#from . import requiredInfoClass
+from . import requiredInfoClass
 import sys
 #sys.path.insert(0, '/home/gllewellyn19/maap-jupyter-ide/ipycmc/ipycmc/loadGeotiffs')
 #sys.path.insert(0, '/maap-jupyter-ide/ipycmc/ipycmc/loadGeotiffs')
 
 #from ipycmc.ipycmc.loadGeotiffs import requiredInfoClass
 
-import requiredInfoClass
+#import requiredInfoClass
 
 global required_info
 
