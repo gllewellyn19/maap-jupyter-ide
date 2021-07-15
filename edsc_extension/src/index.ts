@@ -16,7 +16,6 @@ import { ReadonlyJSONObject } from '@lumino/coreutils';
 
 /** other external imports **/
 import { INotification } from "jupyterlab_toastify";
-import * as $ from "jquery";
 
 /** internal imports **/
 import '../style/index.css';
@@ -52,7 +51,6 @@ const extension: JupyterFrontEndPlugin<WidgetTracker<IFrameWidget>> = {
   requires: [IDocumentManager, ICommandPalette, ILayoutRestorer, IMainMenu, INotebookTracker],
   activate: activate
 };
-
 
 function activate(app: JupyterFrontEnd,
                   docManager: IDocumentManager,
@@ -105,20 +103,15 @@ function activate(app: JupyterFrontEnd,
      var lastCellCode = "";
      var cellCodesRepeatedLastIteration = false;
      while(true) {
-       if (checkAbove) {
-         NotebookActions.selectAbove(current.content);
-       } else {
-        NotebookActions.selectBelow(current.content);
-       }
-       iterationsUp ++;
        var cellCode = current.content.activeCell.model.value.text;
        var index = cellCode.indexOf(".MapCMC()");
+       // If you found the variable name
        if (index!=-1) {
          cellCode = cellCode.substring(0, index);
          nameMaapVar = cellCode.substring(cellCode.lastIndexOf("="), cellCode.lastIndexOf("\n")).trim();
          break;
        }
-       // Check to see if repeating
+       // If not, check to see if repeating
        if (cellCode == lastCellCode) {
          // Break because this means they have repeated 3 times in a row now, the var name will just default to w
          if (cellCodesRepeatedLastIteration) {
@@ -131,6 +124,13 @@ function activate(app: JupyterFrontEnd,
          cellCodesRepeatedLastIteration = false;
        }
        lastCellCode = cellCode;
+       // Move the notebook selection one up or down
+       if (checkAbove) {
+        NotebookActions.selectAbove(current.content);
+        } else {
+          NotebookActions.selectBelow(current.content);
+        }
+        iterationsUp ++;
      }
 
      var count = 0;
@@ -269,7 +269,7 @@ function activate(app: JupyterFrontEnd,
         var cellContent = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\nw"
         NotebookActions.insertBelow(current.content);
         NotebookActions.paste(current.content);
-        current.content.mode = 'edit';
+        current.content.mode = 'command';
         current.content.activeCell.model.value.text = cellContent;
         NotebookActions.run(current.content);
       }
@@ -290,10 +290,15 @@ function activate(app: JupyterFrontEnd,
               const insert_text = "# Results to post to CMC (unaccepted file types removed): " + "\n" + response.function_call;
               current.content.activeCell.model.value.text = insert_text;
 
-              // Print error messages
+              // Print error messages (only 5 max)
               var errors = response.errors.split("|");
+              var iterations = 0;
               for (let error of errors) {
                 INotification.info(error);
+                iterations++;
+                if (iterations >= 5) {
+                  break;
+                }
               }
             }
         }
