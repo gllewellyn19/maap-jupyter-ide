@@ -22,7 +22,7 @@ def initialize_required_info(required_info_given):
 # Returns the list for a mosaic JSON for the given s3 links. Returns None in case of error and prints the appropriate error message
 def create_mosaic_json_url(urls, default_tiler_ops, debug_mode):
     # TODO error check in this function and potentially return None, remember to get None in loadGeotiffs
-    mosaic_data_json = create_mosaic_json(urls)
+    mosaic_data_json = create_mosaic_json_from_urls(urls)
     if mosaic_data_json == None:
         return None
     posting_endpoint = required_info.posting_tiler_endpoint
@@ -76,7 +76,8 @@ def create_mosaic_json(urls):
     
 def create_mosaic_json_from_urls(urls):
     os.environ['CURL_CA_BUNDLE']='/etc/ssl/certs/ca-certificates.crt'
-    return MosaicJSON.from_urls(urls)
+    mosaicJson = MosaicJSON.from_urls(urls).json()
+    return json.loads(mosaicJson)
 
 # Fuction provided by Development Seed. Creates the features for each geoTIFF in the mosaic JSON
 def worker(meta):
