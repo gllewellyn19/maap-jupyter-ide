@@ -28,6 +28,7 @@ import { granulePermittedCmrKeys,
         granuleNonIndexedKeys,
         collectionPermittedCmrKeys,
         collectionNonIndexedKeys } from "./searchKeys";
+import { getMaapVarName, printInfoMessage } from "./getMaapVarName";
 
 let edsc_server = '';
 var valuesUrl = new URL(PageConfig.getBaseUrl() + 'maapsec/environment');
@@ -95,70 +96,6 @@ function activate(app: JupyterFrontEnd,
     }
     return widget;
   }
-
-  function getMaapVarName(current, checkAbove) {
-     // If same content 3 times in a row, assume that you have reached the top (reaching the top is a top op)
-     var iterationsUp = 0;
-     var nameMaapVar = null; // default variable
-     //var lastCellCode = "";
-     //var consecutiveCellRepeats = 0;
-     //var maxRepeatsCell = 10;
-     var lastCellId = 0;
-     while(true) {
-       var cellCode = current.content.activeCell.model.value.text;
-       //INotification.info(current.content.activeCell.id);
-       var index = cellCode.indexOf(".MapCMC()");
-       // If you found the variable name
-       if (index!=-1) {
-         cellCode = cellCode.substring(0, index);
-         nameMaapVar = cellCode.substring(cellCode.lastIndexOf("="), cellCode.lastIndexOf("\n")).trim();
-         break;
-       }
-       // If not, check to see if repeating
-       /*if (cellCode == lastCellCode) {
-         // Break because this means they have repeated 3 times in a row now, the var name will just default to w
-         if (consecutiveCellRepeats >= maxRepeatsCell ){
-          iterationsUp -=maxRepeatsCell;
-          break;
-         }
-         consecutiveCellRepeats++;
-       } else {
-        consecutiveCellRepeats = 0;
-       }
-       lastCellCode = cellCode;*/
-       /*if (current.content.activeCell.id == lastCellCode) {
-        INotification.info("end found at: " + current.content.activeCell.model.value.text);
-        break;
-       }*/
-       if (current.content.activeCell.model.id == lastCellId) {
-        INotification.info("for model.id end found at: " + current.content.activeCell.model.value.text);
-        break;
-       }
-       //lastCellCode = current.content.activeCell.id;
-       lastCellId = current.content.activeCell.model.id;
-       INotification.info("current id on iteration "+iterationsUp + current.content.activeCell.model.id);
-       // Move the notebook selection one up or down
-      if (checkAbove) {
-        NotebookActions.selectAbove(current.content);
-      } else {
-        NotebookActions.selectBelow(current.content);
-      }
-      iterationsUp ++;
-     }
-
-     var count = 0;
-     while(count < iterationsUp) {
-        if (checkAbove) {
-          NotebookActions.selectBelow(current.content);
-        } else {
-        NotebookActions.selectAbove(current.content);
-        }
-        count++;
-     }
-
-     return nameMaapVar;
-  }
-
 
   // PASTE SEARCH INTO A NOTEBOOK
   function pasteSearch(args: any, result_type: any, query_type='granule') {
@@ -263,36 +200,17 @@ function activate(app: JupyterFrontEnd,
   function visualizeCMC(args: any) {
     const current = getCurrent(args);
     // If no search is selected, send an error
-    // TODO check for if empty without causing error
     // TODO: comment back in!!
     //if (Object.keys(globals.granuleParams).length == 0) {
     //  INotification.error("Error: No Search Selected.");
     //  return;
     //}
     var getUrl = new URL(PageConfig.getBaseUrl() + 'edsc/visualizeCMC');
-    var maapVarNameAbove = getMaapVarName(current, true);
-    if (maapVarNameAbove != null) {
-      getUrl.searchParams.append("maapVarName", maapVarNameAbove);
-    } else {
-      var maapVarNameBelow = getMaapVarName(current, false);
-      if (maapVarNameBelow != null) {
-        getUrl.searchParams.append("maapVarName", maapVarNameBelow);
-      } else {
-        // if instance of maap cannot be found, paste it into a cell yourself
-        getUrl.searchParams.append("maapVarName", "w");
-        var cellContent = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\nw"
-        NotebookActions.insertBelow(current.content);
-        NotebookActions.paste(current.content);
-        //current.content.mode = 'command';
-        current.content.activeCell.model.value.text = cellContent;
-        NotebookActions.run(current.content);
-      }
-    }
+    getUrl.searchParams.append("maapVarName", getMaapVarName(current));
 
     // TODO: comment back in!!
     //getUrl.searchParams.append("cmr_query", globals.granuleQuery);
     //getUrl.searchParams.append("limit", globals.limit);
-    // Make call to back end
     var xhr = new XMLHttpRequest();
     
     xhr.onload = function() {
@@ -304,20 +222,8 @@ function activate(app: JupyterFrontEnd,
               current.content.mode = 'edit';
               const insert_text = "# Results to post to CMC (unaccepted file types removed): " + "\n" + response.function_call;
               current.content.activeCell.model.value.text = insert_text;
-
-              // Print error messages (only 5 max)
-              if (response.errors) {
-                var errors = response.errors.split("|");
-                var iterations = 0;
-                for (let error of errors) {
-                  INotification.info(error);
-                  iterations++;
-                  if (iterations >= 5) {
-                    break;
-                  }
-                }
-              }
-              
+              INotification.error("Type of response: "+(typeof response));
+              printInfoMessage(response);
             }
         }
         else {
