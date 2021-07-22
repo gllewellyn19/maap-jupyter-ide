@@ -106,7 +106,7 @@ function activate(app: JupyterFrontEnd,
      var lastCellId = 0;
      while(true) {
        var cellCode = current.content.activeCell.model.value.text;
-       INotification.info(current.content.activeCell.id);
+       //INotification.info(current.content.activeCell.id);
        var index = cellCode.indexOf(".MapCMC()");
        // If you found the variable name
        if (index!=-1) {
@@ -136,7 +136,7 @@ function activate(app: JupyterFrontEnd,
        }
        //lastCellCode = current.content.activeCell.id;
        lastCellId = current.content.activeCell.model.id;
-       INotification.info(current.content.activeCell.model.id);
+       INotification.info("current id on iteration "+iterationsUp + current.content.activeCell.model.id);
        // Move the notebook selection one up or down
       if (checkAbove) {
         NotebookActions.selectAbove(current.content);
