@@ -107,10 +107,11 @@ The goal of `load_geotiffs` is to take in the location of a geotiff in a MAAP ad
  * `s3_beginning`: How the NASA data is stored in s3 buckets. This variable is currently `s3://`, but note that if the location of NASA's data changes needs to change, changing this variable might not be enough
    
 ### Debug mode
-Running not in debug mode is a risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. If you receive an error message you do not understand, run the problem in debug mode. Debug mode is enabled by default, but this can be changed in `variables.json`
+Running not in debug mode is a risk if you do not understand how the function works since there is minimal error checking and you are not provided with detailed responses. If you receive an error message you do not understand, run the problem in debug mode. Debug mode is enabled by default, but this can be changed in `variables.json`.
 
 ### Time analysis
-The only difference setting this parameter to True is that the function call is done twice (once with debug mode and once without) and the results are printed. The request url generated for the given parameters including the given `debug_mode` are sent to `load_layer_config` as the function normally does. This function takes longer to run and the only purpose of it is to show the effects of `debug_mode` so that users can decide if they would like to run in that mode. Note that `time_analysis` is False by default. 
+The only difference setting this parameter to True is that the function call is done twice (once with debug mode and once without) and the results are printed. The request url generated for the given parameters including the given `debug_mode` are sent to `load_layer_config` as the function normally does. This function takes longer to run and the only purpose of it is to show the effects of `debug_mode` so that users can decide if they would like to run in that mode. Note that `time_analysis` is False by default, but this can be changed in `variables.json`.
 
 ### Troubleshooting
-* Rerun the loadGeotiff function if the map layer does not show up the first time.
+* Rerun the `load_geotiffs` function if the map layer does not show up the first time.
+* If a layer loads, but you cannot see any tiles, this is likely a CORS policy error and you do not have permission to the data
