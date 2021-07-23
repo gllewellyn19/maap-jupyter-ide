@@ -18,5 +18,6 @@
     "default_ops_load_layer_config": {"handleAs": "wmts_raster"},
     "default_debug_mode":true,
     "default_time_analysis":false,
-    "esa_data_location": "orange-business"
+    "esa_data_location": "orange-business",
+    "s3Beginning":"s3://"
    }

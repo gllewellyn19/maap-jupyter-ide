@@ -32,6 +32,7 @@ class RequiredInfoClass:
             self.default_debug_mode = dictionary["default_debug_mode"]
             self.default_time_analysis = dictionary["default_time_analysis"]
             self.esa_data_location = dictionary["esa_data_location"]
+            self.s3Beginning = dictionary["s3Beginning"]
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt
@@ -63,7 +64,8 @@ class RequiredInfoClass:
         """
         list_variables = [[self.required_starts, "required_starts", list], [self.required_ends, "required_ends", list], [self.defaults_tiler, "defaults_tiler", dict],
         [self.default_handle_as, "default_handle_as", str], [self.default_ops_load_layer_config, "default_ops_load_layer_config", dict],
-        [self.default_debug_mode, "default_debug_mode", bool], [self.default_time_analysis, "default_time_analysis", bool], [self.esa_data_location, "esa_data_location", str]]
+        [self.default_debug_mode, "default_debug_mode", bool], [self.default_time_analysis, "default_time_analysis", bool], [self.esa_data_location, "esa_data_location", str],
+        [self.s3Beginning, "s3Beginning", str]]
         
         for var in list_variables:
             if not self.check_correct_class_arg(var[0], var[1], var[2]):

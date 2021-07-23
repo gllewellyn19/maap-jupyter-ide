@@ -127,7 +127,7 @@ def check_invalid_ending(url):
     bool
         True if the url has an invalid ending and False if not
     str
-        Info message for the user about the ending being invalid. None if no info message required because data valid
+        Info message for the user about the ending being invalid. None if no info message required because data is valid
     """
     for valid_ending in required_info.required_ends:
         if url[len(valid_ending)*-1:] == valid_ending:
@@ -148,7 +148,7 @@ def check_invalid_start(url):
     bool
         True if the url has an invalid start and False if not
     str
-        Info message for the user about the start being invalid. None if no info message required because data valid
+        Info message for the user about the start being invalid. None if no info message required because data is valid
     """
     for valid_start in required_info.required_starts:
         if url[:len(valid_start)] == valid_start:
@@ -170,7 +170,7 @@ def check_esa_data(url):
     bool
         True if the url is esa data and False if not
     str
-        Info message for the user about the url containing esa data. None if no info message required because data valid
+        Info message for the user about the url containing esa data. None if no info message required because data is valid
     """
     if required_info.esa_data_location in url:
         return True, ("Access not permitted to " + url + " because it is data from ESA (" + required_info.esa_data_location + ").")
