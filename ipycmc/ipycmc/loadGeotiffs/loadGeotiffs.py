@@ -188,7 +188,6 @@ def create_request_multiple_geotiffs(urls, default_tiler_ops, debug_mode):
         a request url to be passed to load_layer_config or None in the case of error
     """
     if len(urls) == 1:
-        print("creating single geotiff")
         return create_request_single_geotiff(urls[0], default_tiler_ops, debug_mode)
     if debug_mode and (not errorChecking.tiler_can_access_links(urls)):
         return None
