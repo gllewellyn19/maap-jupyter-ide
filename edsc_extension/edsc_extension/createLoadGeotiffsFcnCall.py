@@ -230,9 +230,9 @@ def check_data_present(s3Link):
     """
     try:
         client = boto3.client('s3')
-        if s3Link[:len(required_info.s3Beginning)] != required_info.s3Beginning:
+        if s3Link[:len(required_info.s3_beginning)] != required_info.s3_beginning:
             return False, None
-        s3Link_mod = s3Link[len(required_info.s3Beginning):]
+        s3Link_mod = s3Link[len(required_info.s3_beginning):]
         end_bucket_name = s3Link_mod.find("/")
         if end_bucket_name == -1:
             return False, None

@@ -72,7 +72,7 @@ def extract_geotiff_links_from_folder(bucket_name, file_path, folder_path, debug
         for obj in bucket.objects.filter(Prefix=file_path):
             # Check makes sure that geotiffs below file path are not added
             if obj.size and file_ending(obj.key) and (obj.key[len(file_path)+1:].find("/") == -1): 
-                geotiff_links.append(required_info.s3Beginning + bucket_name + "/" + obj.key)
+                geotiff_links.append(required_info.s3_beginning + bucket_name + "/" + obj.key)
     except KeyboardInterrupt:
         raise KeyboardInterrupt
     except:

@@ -51,7 +51,7 @@ class RequiredInfoClass:
             self.default_ops_load_layer_config = dictionary["default_ops_load_layer_config"]
             self.default_debug_mode = dictionary["default_debug_mode"]
             self.default_time_analysis = dictionary["default_time_analysis"]
-            self.s3Beginning = dictionary["s3Beginning"]
+            self.s3_beginning = dictionary["s3_beginning"]
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt
@@ -109,7 +109,7 @@ class RequiredInfoClass:
         [self.accepted_arguments_default_ops.get("tile_format_args"), "tile_format_args", list], [self.accepted_arguments_default_ops.get("pixel_selection_args"), "pixel_selection_args", list],
         [self.getting_wmts_endpoint, "getting_wmts_endpoint", str], [self.web_starts, "web_starts", list], [self.default_handle_as, "default_handle_as", str], 
         [self.default_ops_load_layer_config, "default_ops_load_layer_config", dict], [self.default_debug_mode, "default_debug_mode", bool], [self.default_time_analysis, "default_time_analysis", bool],
-        [self.defaults_tiler, "defaults_tiler", dict], [self.s3Beginning, "s3Beginning", str]]
+        [self.defaults_tiler, "defaults_tiler", dict], [self.s3_beginning, "s3_beginning", str]]
         
         for var in list_variables:
             if not self.check_correct_class_arg(var[0], var[1], var[2]):
