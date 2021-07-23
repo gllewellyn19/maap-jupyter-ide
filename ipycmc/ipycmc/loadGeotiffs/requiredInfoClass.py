@@ -110,11 +110,9 @@ class RequiredInfoClass:
         [self.default_ops_load_layer_config, "default_ops_load_layer_config", dict], [self.default_debug_mode, "default_debug_mode", bool], [self.default_time_analysis, "default_time_analysis", bool],
         [self.defaults_tiler, "defaults_tiler", dict]]
         
-        successful = True
         for var in list_variables:
-            successful = self.check_correct_class_arg(var[0], var[1], var[2]) and successful 
-        if not successful:
-            self.setup_successful = False
+            if not self.check_correct_class_arg(var[0], var[1], var[2]):
+                self.setup_successful = False
 
     def check_correct_class_arg(self, arg, arg_name, class_type):
         """
