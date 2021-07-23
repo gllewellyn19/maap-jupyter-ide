@@ -23,7 +23,7 @@ def create_function_call(urls, maap_var_name):
 
     Parameters
     ----------
-    urls : list
+    urls : list or str
         The locations of the files in s3 to read from EarthData search. 
     maap_var_name : str
         Default arguments to pass to the Tiler when making the wmts tiles. May be empty (passed by user)
@@ -69,8 +69,12 @@ def filter_out_invalid_urls(urls):
     str
         Info messages to show to the user about what urls were filtered out. | is used to separate the different info messages
     """
+    if len(urls) == 0:
+        return [], "|No urls in granule search results|"
     if isinstance(urls, str):
-        urls = list(urls)
+        urls = [urls]
+    elif not isinstance(urls, list):
+        return [], "|Object with urls is " +str(type(urls))+" which is invalid|"
     newUrls = []
     info_message = ""
     for url in urls:
@@ -111,7 +115,7 @@ def determine_single_url_valid(url):
 
 def check_invalid_ending(url):
     """
-    Determines if the given url is valid by checking its ending type and making sure that it's in required_inf.required_ends
+    Determines if the given url is valid by checking its ending type and making sure that it's in required_info.required_ends
 
     Parameters
     ----------
@@ -132,7 +136,7 @@ def check_invalid_ending(url):
 
 def check_invalid_start(url):
     """
-    Determines if the given url is valid by checking its start type and making sure that it's in required_inf.required_start
+    Determines if the given url is valid by checking its start type and making sure that it's in required_info.required_start
 
     Parameters
     ----------
@@ -149,7 +153,7 @@ def check_invalid_start(url):
     for valid_start in required_info.required_starts:
         if url[:len(valid_start)] == valid_start:
             return False, None
-    return True, (url + " excluded because doesn't end with one of " + (', '.join([str(elem) for elem in required_info.required_starts])) + ".")
+    return True, (url + " excluded because doesn't start with one of " + (', '.join([str(elem) for elem in required_info.required_starts])) + ".")
 
 def check_esa_data(url):
     """
@@ -169,12 +173,12 @@ def check_esa_data(url):
         Info message for the user about the url containing esa data. None if no info message required because data valid
     """
     if required_info.esa_data_location in url:
-        return False, ("Access not permitted to " + url + " because it is data from ESA.")
-    return True, None
+        return True, ("Access not permitted to " + url + " because it is data from ESA (" + required_info.esa_data_location + ").")
+    return False, None
 
 def add_urls(function_call, newUrls):
     """
-    Adds the urls onto the function call. If there are no urls, makes the functino call a comment telling the user why no urls were able to be found.
+    Adds the urls onto the function call. If there are no urls, makes the function call a comment telling the user why no urls were able to be found.
 
 
     Parameters
@@ -194,7 +198,7 @@ def add_urls(function_call, newUrls):
     if len(newUrls) == 0:
         function_call = "# No urls were found that had valid ending types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_ends]))
         function_call = function_call +") and valid starting types (i.e. one of " + (', '.join([str(elem) for elem in required_info.required_starts]))
-        function_call = function_call + ") and didnt' contain " + required_info.esa_data_location + " (ESA data)."
+        function_call = function_call + ") and didn't contain " + required_info.esa_data_location + " (ESA data)."
         return False, function_call
     else:
         return True, (function_call + str(newUrls))
