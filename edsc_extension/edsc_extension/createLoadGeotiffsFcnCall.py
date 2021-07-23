@@ -11,6 +11,8 @@ Written by: Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 
 from . import requiredInfoClass
 import sys
+import boto3
+import botocore
 
 global required_info
 
@@ -111,6 +113,9 @@ def determine_single_url_valid(url):
     invalid_esa_data, error_message_esa_data = check_esa_data(url)
     if invalid_esa_data:
         return None, error_message_esa_data
+    invalid_data_present, error_message_invalid_data = check_data_present(url)
+    if invalid_data_present:
+        return None, error_message_invalid_data
     return url, None
 
 def check_invalid_ending(url):
@@ -202,3 +207,51 @@ def add_urls(function_call, newUrls):
         return False, function_call
     else:
         return True, (function_call + str(newUrls))
+
+def check_data_present(s3Link):
+    """
+    Checks if the data is present at the given s3 link. Only returns an error if the boto3 head request doesn't fail, but the response 
+    code is not 200 and when the head request fails with a 404 status code. All of this function is in a try except so that if another
+    error occurs the url is just not filtered out because another problem might be at play. If there really is a problem with that url,
+    then the load_geotiffs function will tell the user
+
+    Parameters
+    ----------
+    s3Link : str
+        link to get head request for
+    newUrls : list
+    
+    Returns
+    -------
+    bool
+        True if the url is invalid because the data cannot be found and False otherwise
+    str
+        Info message for the user about the url having a invalid status code. None if no info message required because data is valid
+    """
+    try:
+        client = boto3.client('s3')
+        if s3Link[:len(required_info.s3Beginning)] != required_info.s3Beginning:
+            return False, None
+        s3Link_mod = s3Link[len(required_info.s3Beginning):]
+        end_bucket_name = s3Link_mod.find("/")
+        if end_bucket_name == -1:
+            return False, None
+        bucket_name = s3Link_mod[:end_bucket_name]
+        key_name = s3Link_mod[end_bucket_name+1:]
+        try:
+            response = client.head_object(
+                Bucket=bucket_name,
+                Key=key_name
+            )
+            status_code = response["ResponseMetadata"]["HTTPStatusCode"]
+            if status_code == 200:
+                return False, None
+            else:
+                return True, ("Error when attempting to receive data at " + s3Link + " with status code " + str(status_code) + ".")
+        except botocore.exceptions.ClientError as error:
+            if error.response["ResponseMetadata"]["HTTPStatusCode"] == 404:
+                return True, ("Error when attempting to receive data at " + s3Link + " with status code " + str(404) + ".")
+            else:
+                return False, None
+    except:
+        return False, None
