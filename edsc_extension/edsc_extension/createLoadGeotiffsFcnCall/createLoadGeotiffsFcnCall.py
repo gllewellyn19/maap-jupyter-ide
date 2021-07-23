@@ -3,7 +3,8 @@ This function create the load_geotiffs call after the user presses the button to
 This function filters out all invalid urls and only shows the load_geotiffs call with valid urls. This function also adds all defaults 
 onto the function call so that the users can edit that data as they please before making the function call to load_geotiffs.
 This function also creates info messages for the user to alert them about why certain links were excluded from the function call 
-(because of ending and starting file type or data is esa data and will have permission issues). If no valid urls or another error
+(because of ending and starting file type, data is esa data and will have permission issues, or if boto3 head request cannot reach
+the data). If no valid urls or another error
 in this function, function call returns is a comment explaining the error
 
 Written by: Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
@@ -21,7 +22,8 @@ def create_function_call(urls, maap_var_name):
     """
     Checks if the user given arguments are valid. For the urls, checks that the variable is not empty, all the environments are the same,
     and the file ending is valid. Checks that the class types of the other arguments provided by the user are the correct class type
-    Filters out all urls that do not have the correct ending type, starting type, or contain orange-business (all read from variables.json)
+    Filters out all urls that do not have the correct ending type, starting type, contain orange-business (all read from variables.json),
+    or if a boto3 head request cannot access the data (404 status)
 
     Parameters
     ----------
