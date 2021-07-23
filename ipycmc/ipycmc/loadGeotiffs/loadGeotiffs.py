@@ -8,7 +8,7 @@ with wmts tile to pass to load_layer_config
 This function also provides extensive error checking for the user input arguments so that user's understand the mistakes they are making in their input.
 Only certain MAAP s3 environments are permitted at the moment. 
 
-Written by Grace Llewellyn
+Written by Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
 
 from . import errorChecking

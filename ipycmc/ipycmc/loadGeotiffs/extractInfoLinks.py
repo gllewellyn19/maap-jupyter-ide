@@ -2,7 +2,7 @@
 This file extracts information from the links that the user passed to load_geotiffs. Some of the functionality of these functions include
 extracting the geotiff links from a folder, extracting the bucket name, and extracting the file ending from links.
 
-Written by: Grace Llewellyn
+Written by: Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
 
 import boto3

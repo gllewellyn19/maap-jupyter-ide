@@ -6,7 +6,7 @@ This function also creates info messages for the user to alert them about why ce
 (because of ending and starting file type or data is esa data and will have permission issues). If no valid urls or another error
 in this function, function call returns is a comment explaining the error
 
-Written by: Grace Llewellyn
+Written by: Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
 
 from . import requiredInfoClass

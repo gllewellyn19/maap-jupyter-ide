@@ -12,7 +12,9 @@
 import { NotebookActions } from '@jupyterlab/notebook';
 import { INotification } from "jupyterlab_toastify";
 
-var defaultMaapIpycmcImport = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\nw";
+var defaultIpycmcVarName = "w";
+var defaultMaapIpycmcImport = "from maap.maap import MAAP\nmaap = MAAP\n\nimport ipycmc\nw = ipycmc.MapCMC()\n" + defaultIpycmcVarName;
+
 
 /**
    * The goal of this function is to return the variable name of ipycmc.MapCMC(). It does this by calling the function
@@ -38,7 +40,7 @@ export function getMaapVarName(current: any) {
         NotebookActions.paste(current.content);
         current.content.activeCell.model.value.text = defaultMaapIpycmcImport;
         NotebookActions.run(current.content);
-        return "w";
+        return defaultIpycmcVarName;
       }
     }
 }

@@ -3,7 +3,7 @@ This class holds all the parameters that are necessary to operate the load_geoti
 If debug_mode is True, then checks these variables to make sure that they are valid. All files that make up the load_geotiffs function have
 copies of the RequiredInfoClass
 
-Written by Grace Llewellyn
+Written by Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
 import json
 import requests
