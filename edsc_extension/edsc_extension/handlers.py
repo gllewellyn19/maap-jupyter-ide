@@ -8,7 +8,7 @@ import json
 import maap
 from maap.maap import MAAP
 
-from .createLoadGeotiffsFcnCall import createLoadGeotiffsFcnCall
+from . import createLoadGeotiffsFcnCall
 
 @functools.lru_cache(maxsize=128)
 def get_maap_config(host):
@@ -65,10 +65,6 @@ class GetQueryHandler(IPythonHandler):
 
 
 class VisualizeCMCHandler(IPythonHandler):
-    """
-    Gets the parameters from index.ts and creates a list of granules. Then makes a call to the python script that creates the function call
-    and passes that back to the index.ts along with info messages to display to the user
-    """
     def get(self):
         maap = MAAP(maap_api(self.request.host))
         cmr_query = self.get_argument('cmr_query', '')

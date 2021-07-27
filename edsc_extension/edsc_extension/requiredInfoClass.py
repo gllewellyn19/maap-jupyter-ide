@@ -1,7 +1,6 @@
 """
 This class holds all the parameters that are necessary to create the function call to load_geotiffs mostly by knowing what
 urls to remove from the list of urls that the user gives (i.e. checks the file endings type and starting type as specified in variables.json)
-
 Written by Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
 import json
@@ -74,7 +73,6 @@ class RequiredInfoClass:
     def check_correct_class_arg(self, arg, arg_name, class_type):
         """
         Determines if the given argument is the correct, given class type
-
         Parameters
         ----------
         arg : any
@@ -83,7 +81,6 @@ class RequiredInfoClass:
             Name of the given argument as shown in variables.json (used to show error message to user)
         class_type : any
             Class that arg should be or error printed
-
         Returns
         -------
         bool

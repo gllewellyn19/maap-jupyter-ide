@@ -4,8 +4,7 @@ This function filters out all invalid urls and only shows the load_geotiffs call
 onto the function call so that the users can edit that data as they please before making the function call to load_geotiffs.
 This function also creates info messages for the user to alert them about why certain links were excluded from the function call 
 (because of ending and starting file type, data is esa data and will have permission issues, or if boto3 head request cannot reach
-the data). If no valid urls or another error
-in this function, function call returns is a comment explaining the error
+the data). If no valid urls or another error in this function, function call returns is a comment explaining the error
 
 Written by: Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov
 """
@@ -24,7 +23,6 @@ def create_function_call(urls, maap_var_name):
     and the file ending is valid. Checks that the class types of the other arguments provided by the user are the correct class type
     Filters out all urls that do not have the correct ending type, starting type, contain orange-business (all read from variables.json),
     or if a boto3 head request cannot access the data (404 status)
-
     Parameters
     ----------
     urls : list or str
@@ -55,12 +53,11 @@ def create_function_call(urls, maap_var_name):
         function_call = function_call+", debug_mode="+str(required_info.default_debug_mode)+", time_analysis="+str(required_info.default_time_analysis)
         return function_call + ")", info_message[1:-1]
     except:
-        return ("# Error creating function call\nError message: " + str(sys.exc_info())), None
+        return ("# Error creating function call\n# Error message: " + str(sys.exc_info())), ""
 
 def filter_out_invalid_urls(urls):
     """
     Filters out all urls that do not have the correct ending type, starting type, or contain orange-business (all read from variables.json in case they change)
-
     Parameters
     ----------
     urls : list
@@ -93,7 +90,6 @@ def determine_single_url_valid(url):
     """
     Determines if the given url is valid by checking its beginning and ending types, and also checking that the data is not esa data because
     permission errors with ESA data in NASA maap. Note that only one error message will be shown to the user for a url that is filtered out.
-
     Parameters
     ----------
     urls : str
@@ -123,7 +119,6 @@ def determine_single_url_valid(url):
 def check_invalid_ending(url):
     """
     Determines if the given url is valid by checking its ending type and making sure that it's in required_info.required_ends
-
     Parameters
     ----------
     urls : str
@@ -144,7 +139,6 @@ def check_invalid_ending(url):
 def check_invalid_start(url):
     """
     Determines if the given url is valid by checking its start type and making sure that it's in required_info.required_start
-
     Parameters
     ----------
     urls : str
@@ -166,7 +160,6 @@ def check_esa_data(url):
     """
     Determines if the given url is valid by checking if it contains required_info.esa_data_location which is likely orange-business and means
     that nasa maap will have trouble accessing this data. 
-
     Parameters
     ----------
     urls : str
@@ -186,8 +179,6 @@ def check_esa_data(url):
 def add_urls(function_call, newUrls):
     """
     Adds the urls onto the function call. If there are no urls, makes the function call a comment telling the user why no urls were able to be found.
-
-
     Parameters
     ----------
     function_call : str
@@ -216,7 +207,6 @@ def check_data_present(s3Link):
     code is not 200 and when the head request fails with a 404 status code. All of this function is in a try except so that if another
     error occurs the url is just not filtered out because another problem might be at play. If there really is a problem with that url,
     then the load_geotiffs function will tell the user
-
     Parameters
     ----------
     s3Link : str

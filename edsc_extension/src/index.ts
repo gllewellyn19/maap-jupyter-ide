@@ -28,7 +28,7 @@ import { granulePermittedCmrKeys,
         granuleNonIndexedKeys,
         collectionPermittedCmrKeys,
         collectionNonIndexedKeys } from "./searchKeys";
-import { getMaapVarName, printInfoMessages } from "./getIpycmcVarName";
+import { getMaapVarName, printInfoMessage } from "./getMaapVarName";
 
 let edsc_server = '';
 var valuesUrl = new URL(PageConfig.getBaseUrl() + 'maapsec/environment');
@@ -196,15 +196,6 @@ function activate(app: JupyterFrontEnd,
 
   }
 
-  /**
-  * Allows the user to visualize their search results in CMC by creating a function call to load_geotiffs for the user for them to run.
-  * Since loag_geotiffs needs to be run on a ipycmc.MapCMC() object, checks to see if the notebook contains that object. If the object is 
-  * not found, it creates the ipycmc object and maap for the user. If that object is found, this function passes that variable name of
-  * that object to the python script that creates the function call to load_geotiffs. 
-  * 
-  * @param args Args to the function call that allow the Notebook widget to be identified
-  * (functionality added by Grace Llewellyn, grace.a.llewellyn@jpl.nasa.gov)
-  */
   function visualizeCMC(args: any) {
     const current = getCurrent(args);
     // If no search is selected, send an error
@@ -213,9 +204,10 @@ function activate(app: JupyterFrontEnd,
       return;
     }
     var getUrl = new URL(PageConfig.getBaseUrl() + 'edsc/visualizeCMC');
+    getUrl.searchParams.append("maapVarName", getMaapVarName(current));
+    
     getUrl.searchParams.append("cmr_query", globals.granuleQuery);
     getUrl.searchParams.append("limit", globals.limit);
-    getUrl.searchParams.append("maapVarName", getMaapVarName(current));
     var xhr = new XMLHttpRequest();
     
     xhr.onload = function() {
@@ -227,7 +219,7 @@ function activate(app: JupyterFrontEnd,
               current.content.mode = 'edit';
               const insert_text = "# Results to post to CMC (unaccepted file types removed): " + "\n" + response.function_call;
               current.content.activeCell.model.value.text = insert_text;
-              printInfoMessages(response);
+              printInfoMessage(response);
             }
         }
         else {
