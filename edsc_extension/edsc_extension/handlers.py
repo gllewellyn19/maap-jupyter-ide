@@ -66,22 +66,23 @@ class GetQueryHandler(IPythonHandler):
 
 class VisualizeCMCHandler(IPythonHandler):
     def get(self):
-        #maap = MAAP(maap_api(self.request.host))
-        #cmr_query = self.get_argument('cmr_query', '')
-        #limit = str(self.get_argument('limit', ''))
+        """
+        Gets the parameters from index.ts and creates a list of granules. Then makes a call to the python script that creates the function call
+        and passes that back to the index.ts along with info messages to display to the user
+        """
+        maap = MAAP(maap_api(self.request.host))
+        cmr_query = self.get_argument('cmr_query', '')
+        limit = str(self.get_argument('limit', ''))
         maap_var_name = self.get_argument('maapVarName', '')
 
-        #query_string = maap.getCallFromCmrUri(cmr_query, limit=limit)
-        #query_string = "maap.searchGranule(limit=5)"
-        #granules = eval(query_string)
+        query_string = maap.getCallFromCmrUri(cmr_query, limit=limit)
+        granules = eval(query_string)
 
         # get list of granules to pass to load geotiffs 
-        #urls = []
-        #for res in granules:
-        #    if res.getDownloadUrl():
-        #        urls.append(res.getDownloadUrl())
-        
-        urls = ["s3://hello.tif", "s3://hello.tif"]
+        urls = []
+        for res in granules:
+            if res.getDownloadUrl():
+                urls.append(res.getDownloadUrl())
         
         function_call, errors = createLoadGeotiffsFcnCall.create_function_call(urls, maap_var_name)
         self.finish({"function_call": function_call, "errors":errors})
