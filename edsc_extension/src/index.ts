@@ -316,7 +316,7 @@ function activate(app: JupyterFrontEnd,
 
   const visualize_cmc_command = 'search:visualizeCMC';
   app.commands.addCommand(visualize_cmc_command, {
-    label: 'Visualize Granule Results in map',
+    label: 'Visualize Granule Results in CMC',
     isEnabled: () => true,
     execute: args => {
       visualizeCMC(args)
