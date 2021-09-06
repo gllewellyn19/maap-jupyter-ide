@@ -89,8 +89,8 @@ development. I recommend taking a look at [this](https://jupyterlab.readthedocs.
 - Triggered from maap-jupyter-ide
     - Will build corresponding maap-jupyter-ide branch on all of the base images listed in the base_images.txt file
 - Triggered from Gitlab
-    - If triggered from a [base image](https://mas.maap-project.org/root/ade-base-images) being updated, it will only rebuild that base image with map-jupyter-ide’s stable tag on top of it.
-    - If triggered from an update in the [jupyter-image](https://mas.maap-project.org/root/jupyter-image) repo, it will rebuild all of the base images listed in base_iamges.txt with maap-jupyter-ide’s stable tag.
+    - If triggered from a [base image](https://mas.maap-project.org/root/ade-base-images) being updated, it will only rebuild that base image with map-jupyter-ide???s stable tag on top of it.
+    - If triggered from an update in the [jupyter-image](https://mas.maap-project.org/root/jupyter-image) repo, it will rebuild all of the base images listed in base_iamges.txt with maap-jupyter-ide???s stable tag.
 - Troubleshooting
     - If the image failed to build for an unexpected reason, it is likely because the gitlab runner ran out of space. Ssh onto the runner, clean up the docker images (you can get rid of anything - everything important is on s3 backed registries) and restart the failed job.
 
@@ -100,6 +100,3 @@ development. I recommend taking a look at [this](https://jupyterlab.readthedocs.
   - Here is some magic that fixes it (add this line and replace with the path to where your `load_jupyter_server_extension` function is)
         ```bash
         perl -pi -e "s|web_app.settings\['base_url'\]|'/'|g" /show_ssh_info/show_ssh_info/__init__.py
-# maap-jupyter-ide-testing
-# maap-jupyter-ide-testing
-# maap-jupyter-ide-testing
